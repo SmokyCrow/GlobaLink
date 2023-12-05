@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'SignInScreen.dart';
+
 class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,10 @@ class WelcomeScreen extends StatelessWidget {
             // Sign In Button
             ElevatedButton(
               onPressed: () {
-                // Add sign-in navigation logic here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignInScreen()),
+                );
               },
               child: Text('Sign In'),
             ),
