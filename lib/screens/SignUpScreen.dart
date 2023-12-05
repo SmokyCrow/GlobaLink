@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:globalink/screens/WelcomeScreen.dart';
 
-class SignInScreen extends StatelessWidget {
+import 'SignInScreen.dart';
+
+class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,17 +13,17 @@ class SignInScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // "Sign in" Text and Picture
+              // "Sign up" Text and Picture
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // "Sign in" Text
+                  // "Sign up" Text
                   Expanded(
                     flex: 3,
                     child: Padding(
                       padding: EdgeInsets.only(left: 65.0),
                       child: Text(
-                        'Sign in',
+                        'Sign up',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -32,13 +33,12 @@ class SignInScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // Picture
+                  // Picture (You can replace this with your image)
                   Expanded(
                     flex: 2,
                     child: Image.asset(
-                      'images/signin_image.png',
-                      height: MediaQuery.of(context).size.height /
-                          3, // 1/3 of screen height
+                      'images/signup_image.png',
+                      height: MediaQuery.of(context).size.height / 3, // 1/3 of screen height
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -46,10 +46,28 @@ class SignInScreen extends StatelessWidget {
               ),
               SizedBox(height: 16),
 
-              // Username or E-mail TextField
+              // Full Name TextField
               TextFormField(
                 decoration: InputDecoration(
-                  labelText: 'Username or E-mail',
+                  labelText: 'Full Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Username TextField
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Username',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Email TextField
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'E-mail',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -65,25 +83,25 @@ class SignInScreen extends StatelessWidget {
               ),
               SizedBox(height: 32),
 
-              // Sign In Button
+              // Sign Up Button
               ElevatedButton(
                 onPressed: () {
-                  // Add sign-in logic here
+                  // Add sign-up logic here
                 },
-                child: Text('Sign In'),
+                child: Text('Sign Up'),
               ),
               SizedBox(height: 16),
 
-              // Back to Welcome Button
+              // Already have an account? Login Button
               TextButton(
                 onPressed: () {
                   // Navigate back to Welcome screen
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                    MaterialPageRoute(builder: (context) => SignInScreen()),
                   );
                 },
-                child: Text('Don\'t have an account yet?'),
+                child: Text('Already have an account? Login'),
               ),
             ],
           ),

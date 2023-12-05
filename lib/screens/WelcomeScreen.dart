@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'SignInScreen.dart';
+import 'SignUpScreen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -50,7 +51,10 @@ class WelcomeScreen extends StatelessWidget {
             // Sign Up Button
             OutlinedButton(
               onPressed: () {
-                // Add sign-up navigation logic here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpScreen()),
+                );
               },
               child: Text('Sign Up'),
             ),
