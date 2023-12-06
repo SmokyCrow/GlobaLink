@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:globalink/screens/WelcomeScreen.dart';
+import 'package:globalink/screens/SignUpScreen.dart';
 
 class SignInScreen extends StatelessWidget {
   @override
@@ -80,7 +80,7 @@ class SignInScreen extends StatelessWidget {
                   // Navigate back to Welcome screen
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => WelcomeScreen()),
+                    MaterialPageRoute(builder: (context) => SignUpScreen()),
                   );
                 },
                 child: Text('Don\'t have an account yet?'),
