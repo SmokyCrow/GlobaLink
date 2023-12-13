@@ -2,48 +2,86 @@ import 'package:flutter/material.dart';
 import 'package:globalink/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
-
-class SignInScreen extends StatefulWidget{
+class SignInScreen extends StatefulWidget {
   final void Function()? onTap;
   const SignInScreen({super.key, required this.onTap});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
-
 }
 
 class _SignInScreenState extends State<SignInScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void signIn() async{
+  void signIn() async {
     final authService = Provider.of<AuthService>(context, listen: false);
-    try{
+    try {
       await authService.signInWithEmailAndPassword(
-          emailController.text,
-          passwordController.text
-      );
+          emailController.text, passwordController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
     }
-    catch (e){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-    }
+  }
+  final FocusNode emailFocus = FocusNode();
+  final FocusNode passwordFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Add listeners to the FocusNode of each text field
+    emailFocus.addListener(_onEmailFocusChange);
+    passwordFocus.addListener(_onPasswordFocusChange);
+  }
+
+  bool isEmailFocused = false;
+  bool isPasswordFocused = false;
+
+  // Define callback functions for focus changes
+  void _onEmailFocusChange() {
+    setState(() {
+      isEmailFocused = emailFocus.hasFocus;
+    });
+  }
+
+  void _onPasswordFocusChange() {
+    setState(() {
+      isPasswordFocused = passwordFocus.hasFocus;
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the FocusNode listeners when the widget is disposed
+    emailFocus.dispose();
+    passwordFocus.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+    // Calculate the available screen height when the keyboard is open
+    final availableScreenHeight = screenHeight - keyboardHeight;
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
+        height: screenHeight, // Set a fixed height for the background image
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('images/background.png'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          reverse: true, // Ensure the text fields stay above the keyboard
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 64),
               // Image
@@ -54,63 +92,113 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Introduction Text
-              const Text(
-                'Welcome to GlobaLink',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Explore the world and connect with people globally.',
-                style: TextStyle(fontSize: 20),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 80),
-
-              // Username or E-mail TextField
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Username or E-mail',
-                  border: OutlineInputBorder(),
+              // Introduction Text with increased padding
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0), // Increased horizontal padding
+                child: Column(
+                  children: [
+                    const Text(
+                      'Welcome to GlobaLink',
+                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Explore the world and connect with people globally.',
+                      style: TextStyle(fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
 
-              // Password TextField
-              TextFormField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
+              const SizedBox(height: 50),
+
+              // Wrap the text fields and button inside a Container with increased padding
+              Container(
+                padding: EdgeInsets.fromLTRB(16.0, 0, 16.0, (isEmailFocused || isPasswordFocused) ? 0 : 96), // Adjust padding based on text field focus
+                child: ListView(
+                  shrinkWrap: true, // Ensure the ListView takes up only as much space as needed
+                  children: [
+                    // Username or E-mail TextField
+                    TextFormField(
+                      focusNode: emailFocus, // Assign the focus node
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 149, 98, 216), width: 2.0),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 149, 98, 216), width: 2.0),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        labelText: 'Username or E-mail',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Password TextField
+                    TextFormField(
+                      focusNode: passwordFocus, // Assign the focus node
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 149, 98, 216), width: 2.0),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 149, 98, 216), width: 2.0),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        labelText: 'Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      obscureText: true,
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Sign In Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF9562D8),
+                        onPrimary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      onPressed: signIn,
+                      child: const Text('Sign In'),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Not a member?"),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: widget.onTap,
+                          child: const Text(
+                            "Sign Up",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
                 ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 32),
-
-              // Sign In Button
-              ElevatedButton(
-                onPressed: signIn,
-                child: const Text('Sign In'),
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Not a member?"),
-                  const SizedBox(width: 4),
-                  GestureDetector(
-                      onTap: widget.onTap,
-                      child: const Text(
-                          "Sign Up",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          )
-                      )
-                  )
-                ],
               ),
             ],
           ),
