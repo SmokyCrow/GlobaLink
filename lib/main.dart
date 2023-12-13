@@ -1,10 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:globalink/auth/auth_gate.dart';
+import 'package:globalink/services/auth/auth_gate.dart';
 import 'package:globalink/firebase_options.dart';
+import 'package:globalink/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
-import 'auth/auth_service.dart';
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
