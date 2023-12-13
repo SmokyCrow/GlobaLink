@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "578402689454",
+    "project_id": "globalink-41eb2",
+    "storage_bucket": "globalink-41eb2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578402689454:android:d1df4b3c603d98a7c8e83f",
+        "android_client_info": {
+          "package_name": "com.example.globalink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAauYc-cz4P-DwgVxEO2JIrfT_px_b7nQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
