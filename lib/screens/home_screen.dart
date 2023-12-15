@@ -85,6 +85,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
 
 import 'package:globalink/screens/chat_screen.dart';
+import 'package:globalink/screens/profile_screen.dart';
 import 'package:globalink/screens/signin_screen.dart';
 import 'package:globalink/screens/users_screen.dart';
 import 'package:globalink/services/chat/util.dart';
@@ -100,11 +101,28 @@ class _HomeScreen extends State<HomeScreen> {
   bool _error = false;
   bool _initialized = false;
   User? _user;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     initializeFlutterFire();
     super.initState();
+  }
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          fullscreenDialog: true,
+          builder: (context) => const UsersPage(), // Page to add new chats
+        ),
+      );
+    } else if (index == 1) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const ProfileScreen(), // Your profile page
+        ),
+      );
+    }
   }
 
   void initializeFlutterFire() async {
@@ -174,27 +192,32 @@ class _HomeScreen extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _user == null
-                ? null
-                : () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (context) => const UsersPage(),
-                ),
-              );
-            },
-          ),
-        ],
+        backgroundColor: Color.fromARGB(255, 149, 98, 216),
         leading: IconButton(
           icon: const Icon(Icons.logout),
           onPressed: _user == null ? null : logout,
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const Text('Rooms'),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color.fromARGB(255, 148, 98, 214),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add),
+            label: 'New chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
       body: _user == null
           ? Container(

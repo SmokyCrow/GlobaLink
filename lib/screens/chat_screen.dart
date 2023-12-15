@@ -305,6 +305,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      backgroundColor: Color.fromARGB(255, 149, 98, 216),
       systemOverlayStyle: SystemUiOverlayStyle.light,
       title: const Text('Chat'),
     ),
@@ -323,6 +324,10 @@ class _ChatPageState extends State<ChatPage> {
           onSendPressed: _handleSendPressed,
           user: types.User(
             id: FirebaseChatCore.instance.firebaseUser?.uid ?? '',
+          ),
+          theme: const DefaultChatTheme(
+            inputBackgroundColor: Color.fromARGB(255, 149, 98, 216),
+            primaryColor: Color.fromARGB(255, 186, 57, 250)
           ),
         ),
       ),

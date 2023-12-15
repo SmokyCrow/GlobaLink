@@ -280,13 +280,13 @@ class SignInScreen extends StatelessWidget {
 
 
         theme: LoginTheme(
-          primaryColor: Colors.deepPurple,
+          primaryColor: Color.fromARGB(255, 149, 98, 216),
           accentColor: Colors.white,
           errorColor: Colors.deepOrange,
           pageColorLight: Colors.transparent,
           pageColorDark: Colors.transparent,
           titleStyle: const TextStyle(
-            color: Colors.deepPurple,
+            color: Color.fromARGB(255, 149, 98, 216),
             fontFamily: 'Quicksand',
             letterSpacing: 4,
           ),
@@ -297,8 +297,8 @@ class SignInScreen extends StatelessWidget {
           ),
           // Button Theme
           buttonTheme: const LoginButtonTheme(
-            backgroundColor: Colors.deepPurpleAccent,
-            highlightColor: Colors.deepPurple,
+            backgroundColor: Color.fromARGB(255, 149, 98, 216),
+            highlightColor: Color.fromARGB(255, 149, 98, 216),
             splashColor: Colors.purpleAccent,
             elevation: 9.0,
             highlightElevation: 6.0,
@@ -310,15 +310,15 @@ class SignInScreen extends StatelessWidget {
             contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
-              borderSide: BorderSide(color: Colors.deepPurple.shade500),
+              borderSide: BorderSide(color: Color.fromARGB(255, 149, 98, 216)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
-              borderSide: BorderSide(color: Colors.deepPurple.shade700),
+              borderSide: BorderSide(color: Color.fromARGB(255, 149, 98, 216)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25.0),
-              borderSide: BorderSide(color: Colors.deepPurple.shade900),
+              borderSide: BorderSide(color: Color.fromARGB(255, 149, 98, 216)),
             ),
             labelStyle: TextStyle(color: Colors.deepPurple.shade700),
             errorBorder: OutlineInputBorder(

@@ -47,6 +47,7 @@ class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
+      backgroundColor: Color.fromARGB(255, 149, 98, 216),
       systemOverlayStyle: SystemUiOverlayStyle.light,
       title: const Text('Users'),
     ),
