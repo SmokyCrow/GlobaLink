@@ -1,17 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+
+  final User? user = FirebaseAuth.instance.currentUser;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController _usernameController = TextEditingController();
+
+  Future updateUserProfile(String newUsername) async {
+    if (user != null) {
+      await _firestore.collection('users').doc(user!.uid).update({
+        'username': newUsername,
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (user != null) {
+      _firestore.collection('users').doc(user!.uid).get().then((doc) {
+        if (doc.exists && doc.data() != null) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          _usernameController.text = data['username'] ?? '';
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Your Profile'),
-        centerTitle: true,
-        backgroundColor: Colors.grey[300],
-        elevation: 0, // Removes the shadow from the app bar.
-      ),
+        appBar: AppBar(
+        title: Text('Your Profile', style: TextStyle(color: Color.fromARGB(
+            255, 148, 98, 214))),
+    centerTitle: true,
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    ),
       body: ListView(
         padding: EdgeInsets.all(20),
         children: [
@@ -49,14 +81,40 @@ class ProfileScreen extends StatelessWidget {
             },
           ),
           SizedBox(height: 20), // Add space above the save button
-          ElevatedButton(
-            child: Text('Save changes'),
-            onPressed: () {
-              // TODO: Implement save changes logic
-            },
-            style: ElevatedButton.styleFrom(
-              primary: Colors.grey[300], // Background color
-              onPrimary: Colors.black, // Text color
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  blurRadius: 10,
+                  offset: Offset(0, 10),
+                ),
+              ],
+            ),
+            child: TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(
+                labelText: 'Username',
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            child: ElevatedButton(
+              child: Text('Save changes'),
+              onPressed: () {
+                // TODO: Implement save changes logic
+              },
+              style: ElevatedButton.styleFrom(
+                primary: Colors.deepPurple, // Button background color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ),
+              ),
             ),
           ),
         ],

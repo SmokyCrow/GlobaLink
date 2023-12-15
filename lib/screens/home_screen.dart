@@ -119,7 +119,7 @@ class _HomeScreen extends State<HomeScreen> {
     } else if (index == 1) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const ProfileScreen(), // Your profile page
+          builder: (context) => ProfileScreen(), // Your profile page
         ),
       );
     }
