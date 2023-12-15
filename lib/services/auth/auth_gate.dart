@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:globalink/services/auth/signin_or_signup.dart';
+import 'package:globalink/screens/signin_screen.dart';
 
 import '../../screens/home_screen.dart';
 
@@ -18,7 +18,7 @@ class AuthGate extends StatelessWidget{
             return const HomeScreen();
           }
           else{
-            return const SigninOrSignup();
+            return const SignInScreen();
           }
         },
       )

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_firebase_chat_core/flutter_firebase_chat_core.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 
 class AuthService extends ChangeNotifier{
@@ -41,10 +43,23 @@ class AuthService extends ChangeNotifier{
         'email': email,
       });
 
+      await FirebaseChatCore.instance.createUserInFirestore(
+        types.User(
+          firstName: 'John',
+          id: userCredential.user!.uid, // UID from Firebase Authentication
+          imageUrl: 'https://i.pravatar.cc/300',
+          lastName: 'Doe',
+        ),
+      );
+
 
       return userCredential;
     } on FirebaseAuthException catch (e){
       throw Exception(e.code);
     }
+  }
+
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 }
