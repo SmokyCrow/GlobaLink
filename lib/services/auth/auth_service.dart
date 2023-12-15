@@ -39,16 +39,12 @@ class AuthService extends ChangeNotifier{
               password: password
           );
       _fireStore.collection('users').doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'email': email,
+        'uid': userCredential.user!.uid
       });
 
       await FirebaseChatCore.instance.createUserInFirestore(
         types.User(
-          firstName: 'John',
           id: userCredential.user!.uid, // UID from Firebase Authentication
-          imageUrl: 'https://i.pravatar.cc/300',
-          lastName: 'Doe',
         ),
       );
 
