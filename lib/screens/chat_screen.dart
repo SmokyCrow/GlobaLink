@@ -117,8 +117,10 @@ import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({
+import '../services/translation/translation_service.dart';
+
+class ChatScreen extends StatefulWidget {
+  const ChatScreen({
     super.key,
     required this.room,
   });
@@ -126,10 +128,10 @@ class ChatPage extends StatefulWidget {
   final types.Room room;
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatScreen> createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatScreen> {
   bool _isAttachmentUploading = false;
 
   void _handleAtachmentPressed() {
@@ -289,11 +291,42 @@ class _ChatPageState extends State<ChatPage> {
     FirebaseChatCore.instance.updateMessage(updatedMessage, widget.room.id);
   }
 
-  void _handleSendPressed(types.PartialText message) {
-    FirebaseChatCore.instance.sendMessage(
-      message,
-      widget.room.id,
-    );
+  void _handleSendPressed(types.PartialText message) async {
+    // Assume you have a way to get the recipient's preferred language
+    // This could be from the user's profile or a separate settings
+    String recipientLang = 'HU';
+
+    if (recipientLang != 'EN') { // Assuming the sender's language is English
+      try {
+        TranslationService translationService = TranslationService('952f35b2-563a-6d96-4e47-6cd7c1991ff0:fx');
+        String translatedText = await translationService.translate(message.text, recipientLang);
+
+        // Create a new message with the translated text
+        final translatedMessage = types.PartialText(
+          text: translatedText,
+          // Include other necessary properties from the original message
+        );
+
+        // Send the translated message
+        FirebaseChatCore.instance.sendMessage(
+          translatedMessage,
+          widget.room.id,
+        );
+      } catch (e) {
+        print('Translation failed: $e');
+        // Optionally send the original message in case of failure
+        FirebaseChatCore.instance.sendMessage(
+          message,
+          widget.room.id,
+        );
+      }
+    } else {
+      // If no translation is needed, send the original message
+      FirebaseChatCore.instance.sendMessage(
+        message,
+        widget.room.id,
+      );
+    }
   }
 
   void _setAttachmentUploading(bool uploading) {

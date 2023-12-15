@@ -37,7 +37,7 @@ class UsersPage extends StatelessWidget {
     navigator.pop();
     await navigator.push(
       MaterialPageRoute(
-        builder: (context) => ChatPage(
+        builder: (context) => ChatScreen(
           room: room,
         ),
       ),

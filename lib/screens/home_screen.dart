@@ -266,7 +266,7 @@ class _HomeScreen extends State<HomeScreen> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ChatPage(
+                      builder: (context) => ChatScreen(
                         room: room,
                       ),
                     ),
