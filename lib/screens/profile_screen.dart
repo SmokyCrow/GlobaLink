@@ -11,8 +11,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final User? user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController _usernameController = TextEditingController();
-  List<String> userInterests = [];
-  String newInterest = '';
+  List<String> allInterests = []; // List of all interests fetched from Firebase
+  List<String> userInterests = []; // User's current interests
+  Set<String> selectedInterests = Set(); // Selected interests
 
   Future updateUserProfile(String newUsername) async {
     if (user != null) {
@@ -20,7 +21,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'username': newUsername,
         'interests': userInterests,
       });
-      newInterest = '';
     }
   }
 
@@ -34,7 +34,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _usernameController.text = data['username'] ?? '';
         }
       });
+      fetchAllInterests();
       fetchUserInterests();
+    }
+  }
+
+  void fetchAllInterests() async {
+    final interestsDoc = await _firestore.collection('centraldata').doc('interests').get();
+    if (interestsDoc.exists && interestsDoc.data() != null) {
+      setState(() {
+        allInterests = List<String>.from(interestsDoc.data()?['interests'] ?? []);
+        print("Interests: $allInterests"); // Debugging print statement
+      });
     }
   }
 
@@ -96,43 +107,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 title: Text('Your Interests'),
                 textColor: Color.fromARGB(255, 186, 57, 250),
                 iconColor: Color.fromARGB(255, 186, 57, 250),
-                children: userInterests
-                    .map((interest) => ListTile(title: Text(interest)))
-                    .toList()
-                  ..add(
-                    ListTile(
-                      title: TextField(
-                        onChanged: (value) {
-                          newInterest = value;
-                        },
-                        onSubmitted: (String value) async {
-                          if (value.isNotEmpty) {
-                            setState(() {
-                              userInterests.add(value);
-                              newInterest = '';
-                            });
-                          }
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Add new interest',
-                          labelStyle: TextStyle(color: Color.fromARGB(255, 186, 57, 250)),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(color: Color.fromARGB(255, 87, 56, 122)),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(color: Color.fromARGB(255, 87, 56, 122)),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                            borderSide: BorderSide(color: Color.fromARGB(255, 87, 56, 122)),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                        ),
-                      ),
-                    ),
-                  ),
+                children: allInterests.map((interest) {
+                  bool isSelected = userInterests.contains(interest);
+                  return CheckboxListTile(
+                    title: Text(interest),
+                    value: isSelected,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        if (value == true) {
+                          selectedInterests.add(interest);
+                        } else {
+                          selectedInterests.remove(interest);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
               ),
             ),
           ),
