@@ -7,7 +7,6 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 class AuthService extends ChangeNotifier{
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
   Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
@@ -16,6 +15,7 @@ class AuthService extends ChangeNotifier{
           email: email,
           password: password
       );
+
       _fireStore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
@@ -39,12 +39,15 @@ class AuthService extends ChangeNotifier{
               password: password
           );
 
-      await FirebaseChatCore.instance.createUserInFirestore(
-        types.User(
-          id: userCredential.user!.uid, // UID from Firebase Authentication
-        ),
-      );
-
+      _fireStore.collection('users').doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'email': email
+      });
+      // await FirebaseChatCore.instance.createUserInFirestore(
+      //   types.User(
+      //     id: userCredential.user!.uid, // UID from Firebase Authentication
+      //   ),
+      // );
 
       return userCredential;
     } on FirebaseAuthException catch (e){
