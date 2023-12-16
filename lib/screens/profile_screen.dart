@@ -109,18 +109,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 iconColor: Color.fromARGB(255, 186, 57, 250),
                 children: allInterests.map((interest) {
                   bool isSelected = userInterests.contains(interest);
-                  return CheckboxListTile(
-                    title: Text(interest),
-                    value: isSelected,
-                    onChanged: (bool? value) {
+                  return InkWell(
+                    onTap: () {
                       setState(() {
-                        if (value == true) {
-                          selectedInterests.add(interest);
+                        if (isSelected) {
+                          userInterests.remove(interest);
                         } else {
-                          selectedInterests.remove(interest);
+                          userInterests.add(interest);
                         }
                       });
                     },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      margin: EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Color.fromARGB(255, 186, 57, 250) : Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(interest, style: TextStyle(color: isSelected ? Colors.white : Colors.black)),
+                    ),
                   );
                 }).toList(),
               ),
