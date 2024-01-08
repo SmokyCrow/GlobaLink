@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 
 import '../../model/message.dart';
 import '../translation/translation_service.dart';
 
-class ChatService extends ChangeNotifier{
+class ChatService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
@@ -30,6 +29,8 @@ class ChatService extends ChangeNotifier{
     ids.sort();
     String chatRoomId = ids.join("_");
 
+    final myMap = <String, int>{};
+    await _fireStore.collection('chat_rooms').doc(chatRoomId).set(myMap);
 
     await _fireStore.collection('chat_rooms').doc(chatRoomId).collection('messages').add(newMessage.toMap());
 

@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Pages to navigate between
   final List<Widget> _pages = [
-    const RoomsScreen(), // Replace with your RoomsScreen widget
+    RoomsScreen(), // Replace with your RoomsScreen widget
     UsersScreen(), // Replace with your UsersScreen widget
     ProfileScreen(), // Already defined in your code
   ];

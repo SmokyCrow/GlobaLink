@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -209,8 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // Add logic to show a confirmation message
               },
               style: ElevatedButton.styleFrom(
-                primary:
-                    Color.fromARGB(255, 87, 56, 122), // Button background color
+                backgroundColor: Color.fromARGB(255, 87, 56, 122), // Button background color
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                 ),

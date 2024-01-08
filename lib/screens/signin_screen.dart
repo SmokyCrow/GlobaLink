@@ -55,6 +55,7 @@ class SignInScreen extends StatelessWidget {
           fit: BoxFit.cover,
         ),
       ),
+
       child: FlutterLogin(
         title: 'GlobaLink',
         logo: const AssetImage('images/welcome_page.png'),

@@ -43,11 +43,6 @@ class AuthService extends ChangeNotifier{
         'uid': userCredential.user!.uid,
         'email': email
       });
-      // await FirebaseChatCore.instance.createUserInFirestore(
-      //   types.User(
-      //     id: userCredential.user!.uid, // UID from Firebase Authentication
-      //   ),
-      // );
 
       return userCredential;
     } on FirebaseAuthException catch (e){
