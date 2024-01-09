@@ -38,8 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             profilePictureUrl = data['profile_picture_url'] ?? '';
             selectedLanguage =
                 data['native_language'] ?? null; // Update selectedLanguage
-            selectedPreferredLanguage = data['preferred_language'] ??
-                null; // Update selectedPreferredLanguage
+            selectedPreferredLanguage = data['preferred_language'] ?? null; // Update selectedPreferredLanguage
           });
         }
       });
