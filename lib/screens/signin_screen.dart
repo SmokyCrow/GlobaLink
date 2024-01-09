@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:globalink/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth/auth_service.dart';
@@ -30,38 +31,17 @@ class SignInScreen extends StatelessWidget {
       return 'Email and password cannot be empty';
     }
 
-    final username = data.additionalSignupData?['username'];
-    final nativeLanguage = data.additionalSignupData?['native_language'];
-    final spokenLanguage = data.additionalSignupData?['spoken_languages'];
-    final interests = data.additionalSignupData?['interests'];
-
-    if ([username, nativeLanguage, spokenLanguage, interests].contains(null)) {
-      return 'Please fill in all the fields';
-    }
-
-    final authService = Provider.of<AuthService>(context, listen: false);
     try {
-      UserCredential userCredential = await authService.signUpWithEmailAndPassword(
-          data.name!,
-          data.password!,
-          username!,
-          nativeLanguage!,
-          // Assuming spokenLanguages and interests are comma-separated strings,
-          // split them into a list. Modify as needed to match your data format.
-          spokenLanguage!,
-          interests!.split(',')
-      );
-
-      // Check if the user credential is successfully created
-      if (userCredential.user == null) {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      UserCredential userCredential = await authService.signUpWithEmailAndPassword(data.name!, data.password!);
+      User? user = userCredential.user;
+      if (user == null) {
         return 'Failed to create an account';
       }
-
-      // The account was created successfully
+      // Continue with the user object...
       return null;
-    } catch (e) {
-      // Catch any errors and return an appropriate message
-      return e.toString();
+    } on FirebaseAuthException catch (e) {
+      return e.message; // Returning the error message from FirebaseAuth
     }
   }
 
@@ -89,17 +69,6 @@ class SignInScreen extends StatelessWidget {
         title: 'GlobaLink',
         logo: const AssetImage('images/welcome_page.png'),
         onLogin: (data) => _authUser(data, context),
-        additionalSignupFields: [
-          const UserFormField(keyName: 'username', displayName: 'Username', userType: LoginUserType.name),
-          const UserFormField(keyName: 'native_language', displayName: 'Native Language', userType: LoginUserType.name),
-          const UserFormField(keyName: 'spoken_languages', displayName: 'Spoken Languages', userType: LoginUserType.name),
-          UserFormField(keyName: 'interests', displayName: 'Interests', userType: LoginUserType.name, fieldValidator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please fill in your interests';
-            }
-            return null;
-          }),
-        ],
         onSignup: (data) => _signupUser(data, context),
         onSubmitAnimationCompleted: () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -161,4 +130,3 @@ class SignInScreen extends StatelessWidget {
     );
   }
 }
-

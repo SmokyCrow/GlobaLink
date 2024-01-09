@@ -34,10 +34,6 @@ class AuthService extends ChangeNotifier{
   Future<UserCredential> signUpWithEmailAndPassword(
       String email,
       String password,
-      String username,
-      String nativeLanguage,
-      String spokenLanguage,
-      List<String> interests
       ) async {
     try{
       UserCredential userCredential =
@@ -49,10 +45,6 @@ class AuthService extends ChangeNotifier{
       await _fireStore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
-        'username': username,
-        'native_language': nativeLanguage,
-        'spoken_languages': spokenLanguage,
-        'interests': interests
       });
 
       return userCredential;

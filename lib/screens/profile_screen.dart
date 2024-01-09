@@ -17,11 +17,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<String> userInterests = []; // User's current interests
   Set<String> selectedInterests = Set(); // Selected interests
 
-  Future updateUserProfile(String newUsername) async {
+  Future<void> updateUserProfile(String newUsername) async {
     if (user != null) {
       await _firestore.collection('users').doc(user!.uid).update({
         'username': newUsername,
         'interests': userInterests,
+        'profileComplete': true,
       });
     }
   }
@@ -43,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void fetchAllInterests() async {
     final interestsDoc = await _firestore.collection('centraldata').doc('interests').get();
-    if (interestsDoc.exists && interestsDoc.data() != null) {
+    if (interestsDoc.exists && interestsDoc.data() != null && mounted) {
       setState(() {
         allInterests = List<String>.from(interestsDoc.data()?['interests'] ?? []);
         print("Interests: $allInterests"); // Debugging print statement
@@ -53,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void fetchUserInterests() async {
     final userDoc = await _firestore.collection('users').doc(user?.uid).get();
-    if (userDoc.exists && userDoc.data() != null) {
+    if (userDoc.exists && userDoc.data() != null && mounted) {
       setState(() {
         userInterests = List<String>.from(userDoc.data()?['interests'] ?? []);
         print("Interests: $userInterests"); // Debugging print statement
@@ -113,13 +114,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   bool isSelected = userInterests.contains(interest);
                   return InkWell(
                     onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          userInterests.remove(interest);
-                        } else {
-                          userInterests.add(interest);
-                        }
-                      });
+                      if(mounted){
+                        setState(() {
+                          if (isSelected) {
+                            userInterests.remove(interest);
+                          } else {
+                            userInterests.add(interest);
+                          }
+                        });
+                      }
+
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
