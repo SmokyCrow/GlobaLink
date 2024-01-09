@@ -52,7 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> uploadProfilePicture() async {
     final picker = ImagePicker();
     final XFile? pickedFile =
-        await picker.pickImage(source: ImageSource.gallery);
+    await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -67,12 +67,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       Map<String, dynamic> updatedData = {
         'username': newUsername,
         'interests': userInterests,
+        'profileComplete': true,
       };
 
       if (selectedProfilePicture != null) {
         String userId = user!.uid;
         Reference storageRef =
-            FirebaseStorage.instance.ref().child("profile_pictures/$userId");
+        FirebaseStorage.instance.ref().child("profile_pictures/$userId");
 
         try {
           UploadTask uploadTask = storageRef.putFile(selectedProfilePicture!);
@@ -102,11 +103,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void fetchAllInterests() async {
     final interestsDoc =
-        await _firestore.collection('centraldata').doc('interests').get();
+    await _firestore.collection('centraldata').doc('interests').get();
     if (interestsDoc.exists && interestsDoc.data() != null) {
       setState(() {
         allInterests =
-            List<String>.from(interestsDoc.data()?['interests'] ?? []);
+        List<String>.from(interestsDoc.data()?['interests'] ?? []);
         print("Interests: $allInterests"); // Debugging print statement
       });
     }
@@ -124,11 +125,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void fetchLanguages() async {
     final languagesDoc =
-        await _firestore.collection('centraldata').doc('languages').get();
+    await _firestore.collection('centraldata').doc('languages').get();
     if (languagesDoc.exists && languagesDoc.data() != null) {
       setState(() {
         allLanguages =
-            List<String>.from(languagesDoc.data()?['languages'] ?? []);
+        List<String>.from(languagesDoc.data()?['languages'] ?? []);
         print("Languages: $allLanguages"); // Debugging print statement
       });
     }
@@ -156,12 +157,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundImage: (selectedProfilePicture != null)
                   ? FileImage(selectedProfilePicture!) as ImageProvider<Object>
                   : (profilePictureUrl.isNotEmpty)
-                      ? NetworkImage(profilePictureUrl) as ImageProvider<Object>
-                      : null,
+                  ? NetworkImage(profilePictureUrl) as ImageProvider<Object>
+                  : null,
               child:
-                  (profilePictureUrl.isEmpty && selectedProfilePicture == null)
-                      ? Icon(Icons.add_a_photo, color: Colors.white)
-                      : null,
+              (profilePictureUrl.isEmpty && selectedProfilePicture == null)
+                  ? Icon(Icons.add_a_photo, color: Colors.white)
+                  : null,
             ),
           ),
           SizedBox(height: 40), // Add space below the profile picture
@@ -181,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: Theme(
               data:
-                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
                 title: Text('Your Interests'),
                 textColor: Color.fromARGB(255, 186, 57, 250),
@@ -200,7 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                       margin: EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
                         color: isSelected
@@ -336,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    Color.fromARGB(255, 87, 56, 122), // Button background color
+                Color.fromARGB(255, 87, 56, 122), // Button background color
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                 ),

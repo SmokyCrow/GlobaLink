@@ -89,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _isProfileComplete = userData?['profileComplete'] ?? false;
       });
     }
+    print(_isProfileComplete);
     if (_isProfileComplete || index == 2) { // Assuming index 2 is for ProfileScreen
       setState(() {
         _currentIndex = index;
