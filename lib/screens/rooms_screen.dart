@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'chat_screen.dart';
 
 class RoomsScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -8,9 +9,10 @@ class RoomsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Query all chat rooms
+    final String currentUserId = _auth.currentUser!.uid;
+
     return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('chat_rooms').snapshots(), // Corrected collection name
+      stream: _firestore.collection('chat_rooms').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -24,20 +26,56 @@ class RoomsScreen extends StatelessWidget {
           return Center(child: Text('No chat rooms found'));
         }
 
-        // Build the list of chat rooms
-        return ListView.builder(
-          itemCount: snapshot.data!.docs.length,
-          itemBuilder: (context, index) {
-            var roomData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-            String roomId = snapshot.data!.docs[index].id;
+        // Filter the rooms where the current user is a participant
+        final rooms = snapshot.data!.docs.where((DocumentSnapshot document) {
+          String roomId = document.id;
+          return roomId.contains(currentUserId);
+        }).toList();
 
-            // Here you could extract more room details if you have them in the document, such as 'lastMessage', 'roomName', etc.
-            // For demonstration, we'll just show the room ID.
-            return ListTile(
-              title: Text('Room ID: $roomId'),
-              onTap: () {
-                // Here you'd navigate to the chat room, passing in the room ID to the chat screen
-                // Navigator.of(context).push(...);
+        if (rooms.isEmpty) {
+          return Center(child: Text('No chat rooms found for this user'));
+        }
+
+        return ListView.builder(
+          itemCount: rooms.length,
+          itemBuilder: (context, index) {
+            String roomId = rooms[index].id;
+            // Identify the ID of the other user in the room
+            String otherUserId = roomId.replaceAll(currentUserId, '').replaceAll('_', '');
+
+            // Create a FutureBuilder to get the username of the other user
+            return FutureBuilder<DocumentSnapshot>(
+              future: _firestore.collection('users').doc(otherUserId).get(),
+              builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return ListTile(title: Text('Loading...'));
+                }
+
+                if (userSnapshot.hasError) {
+                  return ListTile(title: Text('Error: ${userSnapshot.error}'));
+                }
+
+                if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                  return ListTile(title: Text('User not found'));
+                }
+
+                var userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                String username = userData['username'] ?? 'No Name';
+
+                return ListTile(
+                  title: Text(username),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+
+                          recieverUserID: otherUserId,
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             );
           },
@@ -46,4 +84,3 @@ class RoomsScreen extends StatelessWidget {
     );
   }
 }
-

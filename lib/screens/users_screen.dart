@@ -45,7 +45,7 @@ class UsersScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatScreen(recieverUserEmail: userEmail, recieverUserID: userId),
+                    builder: (context) => ChatScreen(recieverUserID: userId),
                   ),
                 );
               },

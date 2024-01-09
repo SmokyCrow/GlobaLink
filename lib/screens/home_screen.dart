@@ -27,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         backgroundColor: Colors.grey[900],
-        title: const Text('Rooms'),
+        title: const Text('GlobaLink'),
         actions: [
           IconButton(
             onPressed: signUserOut,

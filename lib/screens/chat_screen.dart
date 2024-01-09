@@ -5,11 +5,9 @@ import 'package:globalink/model/chat_bubble.dart';
 import 'package:globalink/services/chat/chat_service.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String recieverUserEmail;
   final String recieverUserID;
   const ChatScreen({
     super.key,
-    required this.recieverUserEmail,
     required this.recieverUserID
   });
 
@@ -35,7 +33,26 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.recieverUserEmail),),
+      appBar: AppBar(
+        // Use a FutureBuilder to fetch and display the username
+        title: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance.collection('users').doc(widget.recieverUserID).get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("Loading...");
+            }
+            if (snapshot.hasError) {
+              return const Text("Error");
+            }
+            if (!snapshot.hasData || !snapshot.data!.exists) {
+              return const Text("No user found");
+            }
+            var userData = snapshot.data!.data() as Map<String, dynamic>;
+            String username = userData['username'] ?? 'No Name';
+            return Text(username); // Display the retrieved username
+          },
+        ),
+      ),
       body: Column(
         children: [
           Expanded(

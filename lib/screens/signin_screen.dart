@@ -13,27 +13,56 @@ class SignInScreen extends StatelessWidget {
   Duration get loginTime => const Duration(milliseconds: 2250);
 
   Future<String?> _authUser(LoginData data, BuildContext context) async {
-
-
-    final authService = Provider.of<AuthService>(context, listen: false);
-    UserCredential user = await authService.signInWithEmailAndPassword(data.name, data.password);
-    if (user == null) {
-      return 'Email or password is incorrect';
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      await authService.signInWithEmailAndPassword(data.name, data.password);
+      // If signInWithEmailAndPassword is successful, the function will continue below.
+      return null; // Return null to indicate success
+    } catch (e) {
+      // Handle any other exceptions that might occur.
+      return 'Wrong Email or Password';
     }
-    return null;
   }
+
 
   Future<String?> _signupUser(SignupData data, BuildContext context) async {
     if (data.name == null || data.password == null) {
       return 'Email and password cannot be empty';
     }
 
-    final authService = Provider.of<AuthService>(context, listen: false);
-    User? user = (await authService.signUpWithEmailAndPassword(data.name!, data.password!)) as User?;
-    if (user == null) {
-      return 'Failed to create an account';
+    final username = data.additionalSignupData?['username'];
+    final nativeLanguage = data.additionalSignupData?['native_language'];
+    final spokenLanguage = data.additionalSignupData?['spoken_languages'];
+    final interests = data.additionalSignupData?['interests'];
+
+    if ([username, nativeLanguage, spokenLanguage, interests].contains(null)) {
+      return 'Please fill in all the fields';
     }
-    return null;
+
+    final authService = Provider.of<AuthService>(context, listen: false);
+    try {
+      UserCredential userCredential = await authService.signUpWithEmailAndPassword(
+          data.name!,
+          data.password!,
+          username!,
+          nativeLanguage!,
+          // Assuming spokenLanguages and interests are comma-separated strings,
+          // split them into a list. Modify as needed to match your data format.
+          spokenLanguage!,
+          interests!.split(',')
+      );
+
+      // Check if the user credential is successfully created
+      if (userCredential.user == null) {
+        return 'Failed to create an account';
+      }
+
+      // The account was created successfully
+      return null;
+    } catch (e) {
+      // Catch any errors and return an appropriate message
+      return e.toString();
+    }
   }
 
   Future<String?> _recoverPassword(String name, BuildContext context) async {
@@ -60,6 +89,17 @@ class SignInScreen extends StatelessWidget {
         title: 'GlobaLink',
         logo: const AssetImage('images/welcome_page.png'),
         onLogin: (data) => _authUser(data, context),
+        additionalSignupFields: [
+          const UserFormField(keyName: 'username', displayName: 'Username', userType: LoginUserType.name),
+          const UserFormField(keyName: 'native_language', displayName: 'Native Language', userType: LoginUserType.name),
+          const UserFormField(keyName: 'spoken_languages', displayName: 'Spoken Languages', userType: LoginUserType.name),
+          UserFormField(keyName: 'interests', displayName: 'Interests', userType: LoginUserType.name, fieldValidator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please fill in your interests';
+            }
+            return null;
+          }),
+        ],
         onSignup: (data) => _signupUser(data, context),
         onSubmitAnimationCompleted: () {
           Navigator.of(context).pushReplacement(MaterialPageRoute(

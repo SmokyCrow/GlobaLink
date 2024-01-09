@@ -31,7 +31,14 @@ class AuthService extends ChangeNotifier{
     return await FirebaseAuth.instance.signOut();
   }
 
-  Future<UserCredential> signUpWithEmailAndPassword(String email, String password) async{
+  Future<UserCredential> signUpWithEmailAndPassword(
+      String email,
+      String password,
+      String username,
+      String nativeLanguage,
+      String spokenLanguage,
+      List<String> interests
+      ) async {
     try{
       UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
@@ -39,9 +46,13 @@ class AuthService extends ChangeNotifier{
               password: password
           );
 
-      _fireStore.collection('users').doc(userCredential.user!.uid).set({
+      await _fireStore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
-        'email': email
+        'email': email,
+        'username': username,
+        'native_language': nativeLanguage,
+        'spoken_languages': spokenLanguage,
+        'interests': interests
       });
 
       return userCredential;
