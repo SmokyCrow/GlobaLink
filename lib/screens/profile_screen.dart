@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,13 +20,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<String> allInterests = []; // List of all interests fetched from Firebase
   List<String> userInterests = []; // User's current interests
   Set<String> selectedInterests = Set(); // Selected interests
+  String profilePictureUrl = '';
+  File? selectedProfilePicture;
+
+  Future<void> uploadProfilePicture() async {
+    final picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        selectedProfilePicture = File(pickedFile.path); // Store the selected picture temporarily
+      });
+    }
+  }
 
   Future updateUserProfile(String newUsername) async {
     if (user != null) {
-      await _firestore.collection('users').doc(user!.uid).update({
+      Map<String, dynamic> updatedData = {
         'username': newUsername,
         'interests': userInterests,
-      });
+      };
+      if (selectedProfilePicture != null){
+        String userId = user!.uid;
+        Reference storageRef = FirebaseStorage.instance.ref().child("profile_pictures/$userId");
+
+        try {
+          UploadTask uploadTask = storageRef.putFile(selectedProfilePicture!);
+          await uploadTask;
+          String downloadUrl = await storageRef.getDownloadURL();
+
+          // Update the profile picture URL in the updated data
+          updatedData['profile_picture_url'] = downloadUrl;
+        } catch (e) {
+          // Handle any errors here
+          print("Error uploading profile picture: $e");
+        }
+      }
+      await _firestore.collection('users').doc(user!.uid).update(updatedData);
     }
   }
 
@@ -34,6 +68,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (doc.exists && doc.data() != null) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           _usernameController.text = data['username'] ?? '';
+          setState(() {
+            profilePictureUrl = data['profile_picture_url'] ?? '';
+          });
         }
       });
       fetchAllInterests();
@@ -75,16 +112,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: EdgeInsets.all(20),
         children: [
           SizedBox(height: 20), // Add space above the profile picture
-          CircleAvatar(
-            radius: 60, // Adjust the size of the profile picture
-            backgroundColor:
-                Color.fromARGB(255, 87, 56, 122), // Placeholder color
-            child: IconButton(
-              color: Colors.white,
-              icon: Icon(Icons.add),
-              onPressed: () {
-                // TODO: Implement profile picture change
-              },
+          GestureDetector(
+            onTap: uploadProfilePicture,
+            child: CircleAvatar(
+              radius: 60,
+              backgroundColor: Color.fromARGB(255, 87, 56, 122),
+              backgroundImage: (selectedProfilePicture != null)
+                  ? FileImage(selectedProfilePicture!) as ImageProvider<Object>
+                  : (profilePictureUrl.isNotEmpty)
+                  ? NetworkImage(profilePictureUrl) as ImageProvider<Object>
+                  : null,
+              child: (profilePictureUrl.isEmpty && selectedProfilePicture == null)
+                  ? Icon(Icons.add_a_photo, color: Colors.white)
+                  : null,
             ),
           ),
           SizedBox(height: 40), // Add space below the profile picture
