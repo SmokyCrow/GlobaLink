@@ -20,8 +20,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<String> allInterests = []; // List of all interests fetched from Firebase
   List<String> userInterests = []; // User's current interests
   Set<String> selectedInterests = Set(); // Selected interests
-  String profilePictureUrl = '';
-  File? selectedProfilePicture;
+  List<String> allLanguages = []; // List of all available languages
+  String? selectedLanguage; // Selected native language
+  String? selectedPreferredLanguage; // User's preferred language
+  String profilePictureUrl = ''; // Profile pictures url
+  File? selectedProfilePicture; // The selected profile picture
+
+  @override
+  void initState() {
+    super.initState();
+    if (user != null) {
+      _firestore.collection('users').doc(user!.uid).get().then((doc) {
+        if (doc.exists && doc.data() != null) {
+          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+          _usernameController.text = data['username'] ?? '';
+          setState(() {
+            profilePictureUrl = data['profile_picture_url'] ?? '';
+            selectedLanguage = data['native_language'] ?? null; // Update selectedLanguage
+            selectedPreferredLanguage = data['preferred_language'] ?? null; // Update selectedPreferredLanguage
+          });
+        }
+      });
+      fetchAllInterests();
+      fetchUserInterests();
+      fetchLanguages();
+    }
+  }
 
   Future<void> uploadProfilePicture() async {
     final picker = ImagePicker();
@@ -40,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'username': newUsername,
         'interests': userInterests,
       };
+
       if (selectedProfilePicture != null){
         String userId = user!.uid;
         Reference storageRef = FirebaseStorage.instance.ref().child("profile_pictures/$userId");
@@ -56,25 +81,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           print("Error uploading profile picture: $e");
         }
       }
-      await _firestore.collection('users').doc(user!.uid).update(updatedData);
-    }
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    if (user != null) {
-      _firestore.collection('users').doc(user!.uid).get().then((doc) {
-        if (doc.exists && doc.data() != null) {
-          Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-          _usernameController.text = data['username'] ?? '';
-          setState(() {
-            profilePictureUrl = data['profile_picture_url'] ?? '';
-          });
-        }
-      });
-      fetchAllInterests();
-      fetchUserInterests();
+      if (selectedLanguage != null) {
+        updatedData['native_language'] = selectedLanguage; // Include the selected native language
+      }
+
+      if (selectedPreferredLanguage != null) {
+        updatedData['preferred_language'] = selectedPreferredLanguage;
+      }
+
+      await _firestore.collection('users').doc(user!.uid).update(updatedData);
     }
   }
 
@@ -94,6 +110,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         userInterests = List<String>.from(userDoc.data()?['interests'] ?? []);
         print("Interests: $userInterests"); // Debugging print statement
+      });
+    }
+  }
+
+  void fetchLanguages() async {
+    final languagesDoc = await _firestore.collection('centraldata').doc('languages').get();
+    if (languagesDoc.exists && languagesDoc.data() != null) {
+      setState(() {
+        allLanguages = List<String>.from(languagesDoc.data()?['languages'] ?? []);
+        print("Languages: $allLanguages"); // Debugging print statement
       });
     }
   }
@@ -189,12 +215,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            child: ListTile(
-              title: Text('Your native language'),
-              trailing: Icon(Icons.arrow_drop_down),
-              onTap: () {
-                // TODO: Implement navigation to native language selection
-              },
+            child: ExpansionTile(
+              title: Text('Your Native Language'),
+              textColor: Color.fromARGB(255, 186, 57, 250),
+              iconColor: Color.fromARGB(255, 186, 57, 250),
+              children: (allLanguages.where((language) => language != selectedPreferredLanguage).toList()).map((language) {
+                bool isSelected = language == selectedLanguage;
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        selectedLanguage = null; // Deselect the language
+                      } else {
+                        selectedLanguage = language; // Select the language
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Color.fromARGB(255, 186, 57, 250) : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(language, style: TextStyle(color: isSelected ? Colors.white : Colors.black)),
+                  ),
+                );
+              }).toList(),
             ),
           ),
           Container(
@@ -211,12 +258,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            child: ListTile(
-              title: Text('Your preferred languages'),
-              trailing: Icon(Icons.arrow_drop_down),
-              onTap: () {
-                // TODO: Implement navigation to preferred languages selection
-              },
+            child: ExpansionTile(
+              title: Text('Preferred Language'),
+              textColor: Color.fromARGB(255, 186, 57, 250),
+              iconColor: Color.fromARGB(255, 186, 57, 250),
+              children: (allLanguages.where((language) => language != selectedLanguage).toList()).map((language) {
+                bool isSelected = language == selectedPreferredLanguage;
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        // Nothing happens
+                      } else {
+                        selectedPreferredLanguage = language; // Select the language
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    margin: EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Color.fromARGB(255, 186, 57, 250) : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(language, style: TextStyle(color: isSelected ? Colors.white : Colors.black)),
+                  ),
+                );
+              }).toList(),
             ),
           ),
           SizedBox(height: 20), // Add space above the save button
