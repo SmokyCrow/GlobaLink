@@ -103,9 +103,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           selectedLanguage != null &&
           selectedPreferredLanguage != null
       ){
+        print(newUsername);
+        print(userInterests);
+        print(profilePictureUrl);
+        print(selectedLanguage);
+        print(selectedPreferredLanguage);
         updatedData['profileComplete'] = true;
       }
       else {
+        print(newUsername);
+        print(userInterests);
+        print(profilePictureUrl);
+        print(selectedLanguage);
+        print(selectedPreferredLanguage);
         updatedData['profileComplete'] = false;
       }
 

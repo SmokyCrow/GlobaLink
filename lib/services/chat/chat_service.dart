@@ -13,8 +13,12 @@ class ChatService {
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
     final Timestamp timeStamp = Timestamp.now();
 
+    // Retrieve the receiver's native language
+    DocumentSnapshot receiverSnapshot = await _fireStore.collection('users').doc(receiverId).get();
+    String receiverLanguage = receiverSnapshot['native_language'];
+
     // Translate the message here if the receiver needs it
-    String translatedMessage = await _translationService.translate(message, "HU");
+    String translatedMessage = await _translationService.translate(message, receiverLanguage);
 
     Message newMessage = Message(
       senderId: currentUserId,
@@ -24,6 +28,7 @@ class ChatService {
       translatedMessage: translatedMessage, // Set the translated message
       timeStamp: timeStamp,
     );
+
 
     List<String> ids = [currentUserId, receiverId];
     ids.sort();
