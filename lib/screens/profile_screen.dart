@@ -65,8 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user != null) {
       Map<String, dynamic> updatedData = {
         'username': newUsername,
-        'interests': userInterests,
-        'profileComplete': true,
+        'interests': userInterests
       };
 
       if (selectedProfilePicture != null) {
@@ -94,6 +93,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (selectedPreferredLanguage != null) {
         updatedData['preferred_language'] = selectedPreferredLanguage;
+      }
+
+      if(
+          newUsername.isNotEmpty &&
+          newUsername != "" &&
+          userInterests.isNotEmpty &&
+          profilePictureUrl.isNotEmpty &&
+          selectedLanguage != null &&
+          selectedPreferredLanguage != null
+      ){
+        updatedData['profileComplete'] = true;
+      }
+      else {
+        updatedData['profileComplete'] = false;
       }
 
       await _firestore.collection('users').doc(user!.uid).update(updatedData);
