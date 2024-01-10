@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:globalink/model/chat_bubble.dart';
 import 'package:globalink/services/chat/chat_service.dart';
+import 'partner_profile_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final String recieverUserID;
@@ -50,19 +51,37 @@ class _ChatScreenState extends State<ChatScreen> {
             var userData = snapshot.data!.data() as Map<String, dynamic>;
             String username = userData['username'] ?? 'No Name';
             String profilePictureUrl = userData['profile_picture_url'] ?? '';
-            return Row(
-              children: [
-                profilePictureUrl != ''
-                    ? CircleAvatar(
-                  backgroundImage: NetworkImage(profilePictureUrl),
-                )
-                    : const CircleAvatar(
-                  // Use a default image if profilePictureUrl is ''
-                  backgroundImage: AssetImage('images/default_prof_picture.png'),
-                ),
-                const SizedBox(width: 10),
-                Text(username),
-              ],
+            return GestureDetector(
+              onTap: () {
+                // Navigate to the partner's profile screen when the profile picture is tapped
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PartnerProfileScreen(userId: widget.recieverUserID),
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  profilePictureUrl != ''
+                      ? CircleAvatar(
+                    backgroundImage: NetworkImage(profilePictureUrl),
+                  )
+                      : const CircleAvatar(
+                    // Use a default image if profilePictureUrl is ''
+                    backgroundImage: AssetImage('images/default_prof_picture.png'),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        username,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ); // Display the retrieved username
           },
         ),
