@@ -57,8 +57,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   backgroundImage: NetworkImage(profilePictureUrl),
                 )
                     : const CircleAvatar(
-                  // Use a default image if profilePictureUrl is null
-                  backgroundImage: AssetImage('images/default_profile_picture.png'),
+                  // Use a default image if profilePictureUrl is ''
+                  backgroundImage: AssetImage('images/default_prof_picture.png'),
                 ),
                 const SizedBox(width: 10),
                 Text(username),

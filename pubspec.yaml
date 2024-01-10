@@ -79,7 +79,7 @@ flutter:
     - images/signin_image.png
     - images/signup_image.png
     - images/background.png
-    - images/default_profile_picture.png
+    - images/default_prof_picture.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
