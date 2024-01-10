@@ -11,7 +11,7 @@ class TranslationService {
     final response = await http.post(
       Uri.parse(baseUrl),
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
       body: {
         'auth_key': apiKey,
@@ -21,7 +21,7 @@ class TranslationService {
     );
 
     if (response.statusCode == 200) {
-      var jsonResponse = jsonDecode(response.body);
+      var jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
       return jsonResponse['translations'][0]['text'];
     } else {
       throw Exception('Failed to translate text');
