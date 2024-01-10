@@ -11,76 +11,106 @@ class RoomsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final String currentUserId = _auth.currentUser!.uid;
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: _firestore.collection('chat_rooms').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Conversations', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore.collection('chat_rooms').snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(child: Text('No chat rooms found'));
-        }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No chat rooms found'));
+          }
 
-        // Filter the rooms where the current user is a participant
-        final rooms = snapshot.data!.docs.where((DocumentSnapshot document) {
-          String roomId = document.id;
-          return roomId.contains(currentUserId);
-        }).toList();
+          // Filter the rooms where the current user is a participant
+          final rooms = snapshot.data!.docs.where((DocumentSnapshot document) {
+            String roomId = document.id;
+            return roomId.contains(currentUserId);
+          }).toList();
 
-        if (rooms.isEmpty) {
-          return Center(child: Text('No chat rooms found for this user'));
-        }
+          if (rooms.isEmpty) {
+            return Center(child: Text('No chat rooms found for this user'));
+          }
 
-        return ListView.builder(
-          itemCount: rooms.length,
-          itemBuilder: (context, index) {
-            String roomId = rooms[index].id;
-            // Identify the ID of the other user in the room
-            String otherUserId = roomId.replaceAll(currentUserId, '').replaceAll('_', '');
+          return ListView.builder(
+            itemCount: rooms.length,
+            itemBuilder: (context, index) {
+              String roomId = rooms[index].id;
+              // Identify the ID of the other user in the room
+              String otherUserId = roomId.replaceAll(currentUserId, '').replaceAll('_', '');
 
-            // Create a FutureBuilder to get the username of the other user
-            return FutureBuilder<DocumentSnapshot>(
-              future: _firestore.collection('users').doc(otherUserId).get(),
-              builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
-                  return ListTile(title: Text('Loading...'));
-                }
+              // Create a FutureBuilder to get the username of the other user
+              return FutureBuilder<DocumentSnapshot>(
+                future: _firestore.collection('users').doc(otherUserId).get(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                    return ListTile(title: Text('Loading...'));
+                  }
 
-                if (userSnapshot.hasError) {
-                  return ListTile(title: Text('Error: ${userSnapshot.error}'));
-                }
+                  if (userSnapshot.hasError) {
+                    return ListTile(title: Text('Error: ${userSnapshot.error}'));
+                  }
 
-                if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                  return ListTile(title: Text('User not found'));
-                }
+                  if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                    return ListTile(title: Text('User not found'));
+                  }
 
-                var userData = userSnapshot.data!.data() as Map<String, dynamic>;
-                String username = userData['username'] ?? 'No Name';
+                  var userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                  String username = userData['username'] ?? 'No Name';
 
-                return ListTile(
-                  title: Text(username),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatScreen(
-
-                          recieverUserID: otherUserId,
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            );
-          },
-        );
-      },
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(userData['profile_picture_url']),
+                    ),
+                    title: Text(
+                      username,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    trailing: Icon(Icons.chat),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        FadeRoute(page: ChatScreen(recieverUserID: otherUserId)),
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
+}
+
+class FadeRoute extends PageRouteBuilder {
+  final Widget page;
+  FadeRoute({required this.page})
+      : super(
+    pageBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+        ) =>
+    page,
+    transitionsBuilder: (
+        BuildContext context,
+        Animation<double> animation,
+        Animation<double> secondaryAnimation,
+        Widget child,
+        ) =>
+        FadeTransition(opacity: animation, child: child),
+  );
 }

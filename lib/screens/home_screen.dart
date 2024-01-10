@@ -48,16 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        title: const Text('GlobaLink'),
-        actions: [
-          IconButton(
-            onPressed: signUserOut,
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-      ),
       body: _pages[_currentIndex], // Display the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -114,9 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void signUserOut() {
-    FirebaseAuth.instance.signOut();
-  }
+
 
 
 }

@@ -161,11 +161,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Profile', style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Color.fromARGB(255, 148, 98, 214),
-        elevation: 0,
+        title: Text('Your Profile', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
+        actions: [
+          IconButton(
+            onPressed: signUserOut,
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
       ),
       body: ListView(
         padding: EdgeInsets.all(20),
@@ -370,4 +374,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+  void signUserOut() {
+    FirebaseAuth.instance.signOut();
+  }
+
 }
