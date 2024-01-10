@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:globalink/model/chat_bubble.dart';
 import 'package:globalink/services/chat/chat_service.dart';
+import '../model/animations.dart';
 import 'partner_profile_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -53,12 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
             String profilePictureUrl = userData['profile_picture_url'] ?? '';
             return GestureDetector(
               onTap: () {
-                // Navigate to the partner's profile screen when the profile picture is tapped
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => PartnerProfileScreen(userId: widget.recieverUserID),
-                  ),
-                );
+                Navigator.push(context, SlideRightRoute(page: PartnerProfileScreen(userId: widget.recieverUserID)));
               },
               child: Row(
                 children: [

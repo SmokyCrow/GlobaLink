@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../model/animations.dart';
 import 'chat_screen.dart';
 
 class RoomsScreen extends StatelessWidget {
@@ -79,10 +80,7 @@ class RoomsScreen extends StatelessWidget {
                     ),
                     trailing: Icon(Icons.chat),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        FadeRoute(page: ChatScreen(recieverUserID: otherUserId)),
-                      );
+                      Navigator.push(context, SlideRightRoute(page: ChatScreen(recieverUserID: otherUserId)));
                     },
                   );
                 },
@@ -95,22 +93,3 @@ class RoomsScreen extends StatelessWidget {
   }
 }
 
-class FadeRoute extends PageRouteBuilder {
-  final Widget page;
-  FadeRoute({required this.page})
-      : super(
-    pageBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-        ) =>
-    page,
-    transitionsBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-        Widget child,
-        ) =>
-        FadeTransition(opacity: animation, child: child),
-  );
-}
