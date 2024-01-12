@@ -99,23 +99,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           newUsername.isNotEmpty &&
           newUsername != "" &&
           userInterests.isNotEmpty &&
-          profilePictureUrl.isNotEmpty &&
+          (profilePictureUrl.isNotEmpty || updatedData['profile_picture_url'] != "") &&
           selectedLanguage != null &&
           selectedPreferredLanguage != null
       ){
-        print(newUsername);
-        print(userInterests);
-        print(profilePictureUrl);
-        print(selectedLanguage);
-        print(selectedPreferredLanguage);
         updatedData['profileComplete'] = true;
       }
       else {
-        print(newUsername);
-        print(userInterests);
-        print(profilePictureUrl);
-        print(selectedLanguage);
-        print(selectedPreferredLanguage);
         updatedData['profileComplete'] = false;
       }
 
@@ -179,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onTap: uploadProfilePicture,
             child: CircleAvatar(
               radius: 60,
-              backgroundColor: Color.fromARGB(255, 87, 56, 122),
+              backgroundColor: Colors.blue.shade900,
               backgroundImage: (selectedProfilePicture != null)
                   ? FileImage(selectedProfilePicture!) as ImageProvider<Object>
                   : (profilePictureUrl.isNotEmpty)
@@ -211,8 +201,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Theme.of(context).copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
                 title: Text('Your Interests'),
-                textColor: Color.fromARGB(255, 186, 57, 250),
-                iconColor: Color.fromARGB(255, 186, 57, 250),
+                textColor: Colors.blue.shade900,
+                iconColor: Colors.blue.shade900,
                 children: allInterests.map((interest) {
                   bool isSelected = userInterests.contains(interest);
                   return InkWell(
@@ -231,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       margin: EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? Color.fromARGB(255, 186, 57, 250)
+                            ? Colors.blue.shade900
                             : Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -260,8 +250,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: ExpansionTile(
               title: Text('Your Native Language'),
-              textColor: Color.fromARGB(255, 186, 57, 250),
-              iconColor: Color.fromARGB(255, 186, 57, 250),
+              textColor: Colors.blue.shade900,
+              iconColor: Colors.blue.shade900,
               children: (allLanguages.where((language) => language != selectedPreferredLanguage).toList()).map((language) {
                 bool isSelected = language == selectedLanguage;
                 return InkWell(
@@ -278,7 +268,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     margin: EdgeInsets.symmetric(vertical: 4),
                     decoration: BoxDecoration(
-                      color: isSelected ? Color.fromARGB(255, 186, 57, 250) : Colors.white,
+                      color: isSelected ? Colors.blue.shade900 : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(language, style: TextStyle(color: isSelected ? Colors.white : Colors.black)),
@@ -303,8 +293,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             child: ExpansionTile(
               title: Text('Preferred Language'),
-              textColor: Color.fromARGB(255, 186, 57, 250),
-              iconColor: Color.fromARGB(255, 186, 57, 250),
+              textColor: Colors.blue.shade900,
+              iconColor: Colors.blue.shade900,
               children: (allLanguages.where((language) => language != selectedLanguage).toList()).map((language) {
                 bool isSelected = language == selectedPreferredLanguage;
                 return InkWell(
@@ -321,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                     margin: EdgeInsets.symmetric(vertical: 4),
                     decoration: BoxDecoration(
-                      color: isSelected ? Color.fromARGB(255, 186, 57, 250) : Colors.white,
+                      color: isSelected ? Colors.blue.shade900 : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(language, style: TextStyle(color: isSelected ? Colors.white : Colors.black)),
@@ -348,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               controller: _usernameController,
               decoration: InputDecoration(
                 labelText: 'Username',
-                labelStyle: TextStyle(color: Color.fromARGB(255, 186, 57, 250)),
+                labelStyle: TextStyle(color: Colors.blue.shade900),
                 border: InputBorder.none,
               ),
             ),
@@ -356,18 +346,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             margin: EdgeInsets.only(top: 20),
             child: ElevatedButton(
-              child: Text('Save changes'),
               onPressed: () async {
                 await updateUserProfile(_usernameController.text);
                 // Add logic to show a confirmation message
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                Color.fromARGB(255, 87, 56, 122), // Button background color
+                Colors.blue.shade900, // Button background color
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18.0),
                 ),
               ),
+              child: const Text('Save changes', style: TextStyle(color: Colors.white)),
             ),
           ),
         ],

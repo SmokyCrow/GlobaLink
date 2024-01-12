@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:globalink/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth/auth_service.dart';
@@ -79,53 +78,52 @@ class SignInScreen extends StatelessWidget {
 
 
         theme: LoginTheme(
-          primaryColor: Color.fromARGB(255, 149, 98, 216),
-          accentColor: Colors.white,
-          errorColor: Colors.deepOrange,
-          pageColorLight: Colors.transparent,
-          pageColorDark: Colors.transparent,
-          titleStyle: const TextStyle(
-            color: Color.fromARGB(255, 149, 98, 216),
+          primaryColor: Colors.lightBlue[700], // A shade of light blue for primary elements
+          accentColor: Colors.lightBlueAccent, // A lighter blue for accent elements
+          errorColor: Colors.redAccent, // Red color for error states
+          pageColorLight: Colors.lightBlue[50], // A very light blue for page background
+          pageColorDark: Colors.blueGrey[900], // A dark blue-grey for contrasting elements
+          titleStyle: TextStyle(
+            color: Colors.blue.shade900, // Use shade property for constant colors
             fontFamily: 'Quicksand',
-            letterSpacing: 4,
+            letterSpacing: 2,
           ),
           // TextField style
-          textFieldStyle: const TextStyle(
-            color: Colors.black,
-            shadows: [Shadow(color: Colors.yellow, blurRadius: 2)],
+          textFieldStyle: TextStyle(
+            color: Colors.blueGrey.shade800, // Use shade property for constant colors
+            shadows: [Shadow(color: Colors.blue.shade100, blurRadius: 2)],
           ),
           // Button Theme
-          buttonTheme: const LoginButtonTheme(
-            backgroundColor: Color.fromARGB(255, 149, 98, 216),
-            highlightColor: Color.fromARGB(255, 149, 98, 216),
-            splashColor: Colors.purpleAccent,
-            elevation: 9.0,
-            highlightElevation: 6.0,
+          buttonTheme: LoginButtonTheme(
+            backgroundColor: Colors.blue.shade800, // Use shade property for constant colors
+            highlightColor: Colors.blue.shade600,
+            splashColor: Colors.blue.shade400,
+            elevation: 5.0,
+            highlightElevation: 4.0,
           ),
           // Input Theme
           inputTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.purple.withOpacity(.1),
-            contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            // ... other properties
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
-              borderSide: BorderSide(color: Color.fromARGB(255, 149, 98, 216)),
+              borderSide: BorderSide(color: Colors.blue.shade800), // Use shade property for constant colors
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
-              borderSide: BorderSide(color: Color.fromARGB(255, 149, 98, 216)),
+              borderSide: BorderSide(color: Colors.blue.shade500),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25.0),
-              borderSide: BorderSide(color: Color.fromARGB(255, 149, 98, 216)),
+              borderSide: BorderSide(color: Colors.blue.shade700),
             ),
-            labelStyle: TextStyle(color: Colors.deepPurple.shade700),
+            labelStyle: TextStyle(color: Colors.blue[800]), // Dark blue for label text
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25.0),
-              borderSide: BorderSide(color: Colors.red.shade700),
+              borderSide: BorderSide(color: Colors.redAccent), // Red color for error border
             ),
           ),
         ),
+
       ),
     );
   }

@@ -47,7 +47,7 @@ class ChatService {
     ids.sort();
     String chatRoomId  = ids.join("_");
 
-    return _fireStore.collection('chat_rooms').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: false).snapshots();
+    return _fireStore.collection('chat_rooms').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: true).snapshots();
   }
 
   final TranslationService _translationService = TranslationService("952f35b2-563a-6d96-4e47-6cd7c1991ff0:fx"); // Initialize with your API key
