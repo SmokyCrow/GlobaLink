@@ -25,6 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? selectedPreferredLanguage; // User's preferred language
   String profilePictureUrl = ''; // Profile pictures url
   File? selectedProfilePicture; // The selected profile picture
+  bool _isUpdating = false;
 
   @override
   void initState() {
@@ -63,53 +64,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future updateUserProfile(String newUsername) async {
     if (user != null) {
+      setState(() {
+        _isUpdating = true; // Start the loading indicator
+      });
+
       Map<String, dynamic> updatedData = {
         'username': newUsername,
         'interests': userInterests
       };
 
-      if (selectedProfilePicture != null) {
-        String userId = user!.uid;
-        Reference storageRef =
-        FirebaseStorage.instance.ref().child("profile_pictures/$userId");
+      try{
+        if (selectedProfilePicture != null) {
+          String userId = user!.uid;
+          Reference storageRef =
+          FirebaseStorage.instance.ref().child("profile_pictures/$userId");
 
-        try {
-          UploadTask uploadTask = storageRef.putFile(selectedProfilePicture!);
-          await uploadTask;
-          String downloadUrl = await storageRef.getDownloadURL();
+          try {
+            UploadTask uploadTask = storageRef.putFile(selectedProfilePicture!);
+            await uploadTask;
+            String downloadUrl = await storageRef.getDownloadURL();
 
-          // Update the profile picture URL in the updated data
-          updatedData['profile_picture_url'] = downloadUrl;
-        } catch (e) {
-          // Handle any errors here
-          print("Error uploading profile picture: $e");
+            // Update the profile picture URL in the updated data
+            updatedData['profile_picture_url'] = downloadUrl;
+          } catch (e) {
+            // Handle any errors here
+            print("Error uploading profile picture: $e");
+          }
         }
-      }
 
-      if (selectedLanguage != null) {
-        updatedData['native_language'] =
-            selectedLanguage; // Include the selected native language
-      }
+        if (selectedLanguage != null) {
+          updatedData['native_language'] =
+              selectedLanguage; // Include the selected native language
+        }
 
-      if (selectedPreferredLanguage != null) {
-        updatedData['preferred_language'] = selectedPreferredLanguage;
-      }
+        if (selectedPreferredLanguage != null) {
+          updatedData['preferred_language'] = selectedPreferredLanguage;
+        }
 
-      if(
-          newUsername.isNotEmpty &&
-          newUsername != "" &&
-          userInterests.isNotEmpty &&
-          (profilePictureUrl.isNotEmpty || updatedData['profile_picture_url'] != "") &&
-          selectedLanguage != null &&
-          selectedPreferredLanguage != null
-      ){
-        updatedData['profileComplete'] = true;
+        if(
+        newUsername.isNotEmpty &&
+            newUsername != "" &&
+            userInterests.isNotEmpty &&
+            (profilePictureUrl.isNotEmpty || updatedData['profile_picture_url'] != null) &&
+            selectedLanguage != null &&
+            selectedPreferredLanguage != null
+        ){
+          updatedData['profileComplete'] = true;
+        }
+        else {
+          updatedData['profileComplete'] = false;
+        }
+        await _firestore.collection('users').doc(user!.uid).update(updatedData);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile updated successfully!'), duration: Duration(seconds: 1)),
+        );
+      }catch (e) {
+        // If an error occurs, stop the loading indicator and show an error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update profile.')),
+        );
+      } finally {
+        setState(() {
+          _isUpdating = false; // Stop the loading indicator regardless of the result
+        });
       }
-      else {
-        updatedData['profileComplete'] = false;
-      }
-
-      await _firestore.collection('users').doc(user!.uid).update(updatedData);
     }
   }
 
@@ -161,7 +179,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
       ),
-      body: ListView(
+      body: _isUpdating
+          ? Center(child: CircularProgressIndicator()) // Show loading indicator when updating
+          :ListView(
         padding: EdgeInsets.all(20),
         children: [
           SizedBox(height: 20), // Add space above the profile picture
