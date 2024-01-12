@@ -230,8 +230,7 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
             onPressed: sendMessage,
             icon: Icon(Icons.send,
-                color:
-                    Theme.of(context).colorScheme.primary), // Send icon button.
+                color: Colors.blue.shade900), // Send icon button.
           ),
         ],
       ),
