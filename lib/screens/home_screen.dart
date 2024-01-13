@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _pages = [
     RoomsScreen(), // Replace with your RoomsScreen widget
     UsersScreen(), // Replace with your UsersScreen widget
-    ProfileScreen(), // Already defined in your code
+    const ProfileScreen(), // Already defined in your code
   ];
 
   @override
@@ -45,10 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: _pages[_currentIndex], // Display the selected page
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 700),
+
+        child: _pages[_currentIndex],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: onTabTapped,
@@ -92,12 +97,12 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Profile Incomplete'),
-            content: Text('Please complete your profile.'),
+            title: const Text('Profile Incomplete'),
+            content: const Text('Please complete your profile.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );

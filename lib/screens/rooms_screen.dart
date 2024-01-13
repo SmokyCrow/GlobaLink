@@ -8,14 +8,16 @@ class RoomsScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  RoomsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final String currentUserId = _auth.currentUser!.uid;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Conversations', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
-        iconTheme: IconThemeData(color: Colors.black),
+        title: const Text('Conversations', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
+        iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -23,7 +25,7 @@ class RoomsScreen extends StatelessWidget {
         stream: _firestore.collection('chat_rooms').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -31,7 +33,7 @@ class RoomsScreen extends StatelessWidget {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No chat rooms found'));
+            return const Center(child: Text('No chat rooms found'));
           }
 
           // Filter the rooms where the current user is a participant
@@ -41,7 +43,7 @@ class RoomsScreen extends StatelessWidget {
           }).toList();
 
           if (rooms.isEmpty) {
-            return Center(child: Text('No chat rooms found for this user'));
+            return const Center(child: Text('No chat rooms found for this user'));
           }
 
           return ListView.builder(
@@ -56,7 +58,7 @@ class RoomsScreen extends StatelessWidget {
                 future: _firestore.collection('users').doc(otherUserId).get(),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
                   if (userSnapshot.connectionState == ConnectionState.waiting) {
-                    return ListTile(title: Text('Loading...'));
+                    return const ListTile(title: Text('Loading...'));
                   }
 
                   if (userSnapshot.hasError) {
@@ -64,7 +66,7 @@ class RoomsScreen extends StatelessWidget {
                   }
 
                   if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
-                    return ListTile(title: Text('User not found'));
+                    return const ListTile(title: Text('User not found'));
                   }
 
                   var userData = userSnapshot.data!.data() as Map<String, dynamic>;
@@ -76,9 +78,9 @@ class RoomsScreen extends StatelessWidget {
                     ),
                     title: Text(
                       username,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    trailing: Icon(Icons.chat),
+                    trailing: const Icon(Icons.chat),
                     onTap: () {
                       Navigator.push(context, SlideRightRoute(page: ChatScreen(recieverUserID: otherUserId)));
                     },

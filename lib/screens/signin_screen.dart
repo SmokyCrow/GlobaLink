@@ -83,14 +83,6 @@ class SignInScreen extends StatelessWidget {
           errorColor: Colors.redAccent, // Red color for error states
           pageColorLight: Colors.lightBlue[50], // A very light blue for page background
           pageColorDark: Colors.blueGrey[900], // A dark blue-grey for contrasting elements
-          cardTheme: CardTheme(
-            color: Colors.white, // Set your desired color for the card
-            elevation: 5.0, // Optional: add elevation
-            margin: EdgeInsets.all(20.0), // Optional: add margin
-            shape: RoundedRectangleBorder( // Optional: define the shape
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-          ),
           titleStyle: TextStyle(
             color: Colors.blue.shade900, // Use shade property for constant colors
             fontFamily: 'Quicksand',
@@ -111,9 +103,7 @@ class SignInScreen extends StatelessWidget {
           ),
           // Input Theme
           inputTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.blue.shade500.withOpacity(.1),
-            contentPadding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            // ... other properties
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
               borderSide: BorderSide(color: Colors.blue.shade800), // Use shade property for constant colors

@@ -4,14 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PartnerProfileScreen extends StatelessWidget {
   final String userId;
 
-  PartnerProfileScreen({Key? key, required this.userId}) : super(key: key);
+  const PartnerProfileScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: true,
@@ -21,13 +21,13 @@ class PartnerProfileScreen extends StatelessWidget {
           future: FirebaseFirestore.instance.collection('users').doc(userId).get(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(child: Text("Error loading profile."));
+              return const Center(child: Text("Error loading profile."));
             }
             if (!snapshot.hasData || !snapshot.data!.exists) {
-              return Center(child: Text("No profile found."));
+              return const Center(child: Text("No profile found."));
             }
             var userData = snapshot.data!.data() as Map<String, dynamic>;
             List<String> userInterests = List<String>.from(userData['interests'] ?? []);
@@ -43,12 +43,12 @@ class PartnerProfileScreen extends StatelessWidget {
                     radius: 60,
                     backgroundImage: NetworkImage(userData['profile_picture_url'] ?? 'images/default_prof_picture.png'),
                   ),
-                  SizedBox(height: 8), // Spacing between picture and name
+                  const SizedBox(height: 8), // Spacing between picture and name
                   // Username
-                  Text(username, style: Theme.of(context).textTheme.headline6),
-                  SizedBox(height: 16), // Spacing between name and interests
+                  Text(username, style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 16), // Spacing between name and interests
                   // Interests Section
-                  Text('Interests:', textAlign: TextAlign.center),
+                  const Text('Interests:', textAlign: TextAlign.center),
                   Wrap(
                     spacing: 8.0,
                     runSpacing: 4.0,
@@ -57,9 +57,9 @@ class PartnerProfileScreen extends StatelessWidget {
                       label: Text(interest),
                     )).toList(),
                   ),
-                  SizedBox(height: 16), // Spacing between interests and language
+                  const SizedBox(height: 16), // Spacing between interests and language
                   // Language Section
-                  Text('Language:', textAlign: TextAlign.center),
+                  const Text('Language:', textAlign: TextAlign.center),
                   Chip(
                     label: Text(nativeLanguage),
                   ),

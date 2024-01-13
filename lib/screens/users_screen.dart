@@ -8,6 +8,8 @@ class UsersScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  UsersScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Query all users except the current user
@@ -15,7 +17,7 @@ class UsersScreen extends StatelessWidget {
       stream: _firestore.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
@@ -23,7 +25,7 @@ class UsersScreen extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(child: Text('No users found'));
+          return const Center(child: Text('No users found'));
         }
 
         // Build the list of users
