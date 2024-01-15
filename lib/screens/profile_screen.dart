@@ -193,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
-              return Center(
+              return const Center(
                   child: CircularProgressIndicator(
                     color: Color.fromARGB(255, 17, 71, 160),
                   ));

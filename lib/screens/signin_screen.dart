@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../services/auth/auth_service.dart';
 import 'home_screen.dart';
 
+
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
 
@@ -23,6 +24,7 @@ class SignInScreen extends StatelessWidget {
     }
   }
 
+
   Future<String?> _signupUser(SignupData data, BuildContext context) async {
     if (data.name == null || data.password == null) {
       return 'Email and password cannot be empty';
@@ -30,8 +32,7 @@ class SignInScreen extends StatelessWidget {
 
     try {
       final authService = Provider.of<AuthService>(context, listen: false);
-      UserCredential userCredential = await authService
-          .signUpWithEmailAndPassword(data.name!, data.password!);
+      UserCredential userCredential = await authService.signUpWithEmailAndPassword(data.name!, data.password!);
       User? user = userCredential.user;
       if (user == null) {
         return 'Failed to create an account';
@@ -55,62 +56,74 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlutterLogin(
-      title: 'GlobaLink',
-      logo: const AssetImage('images/welcome_page.png'),
-      onLogin: (data) => _authUser(data, context),
-      onSignup: (data) => _signupUser(data, context),
-      onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ));
-      },
-      onRecoverPassword: (name) => _recoverPassword(name, context),
-      theme: LoginTheme(
-        primaryColor: Colors.lightBlue[700],
-        accentColor: Colors.lightBlueAccent,
-        errorColor: Colors.redAccent,
-        pageColorLight: Colors.lightBlue[50],
-        pageColorDark: Colors.blueGrey[900],
-        titleStyle: TextStyle(
-          color: Colors.blue.shade900,
-          fontFamily: 'Quicksand',
-          letterSpacing: 2,
+    return Container(
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("images/background.png"),
+          fit: BoxFit.cover,
         ),
-        // TextField style
-        textFieldStyle: TextStyle(
-          color: Colors.blueGrey.shade800,
-          shadows: [Shadow(color: Colors.blue.shade100, blurRadius: 2)],
+      ),
+
+      child: FlutterLogin(
+        title: 'GlobaLink',
+        logo: const AssetImage('images/welcome_page.png'),
+        onLogin: (data) => _authUser(data, context),
+        onSignup: (data) => _signupUser(data, context),
+        onSubmitAnimationCompleted: () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ));
+        },
+        onRecoverPassword: (name) => _recoverPassword(name, context),
+
+
+        theme: LoginTheme(
+          primaryColor: Colors.lightBlue[700], // A shade of light blue for primary elements
+          accentColor: Colors.lightBlueAccent, // A lighter blue for accent elements
+          errorColor: Colors.redAccent, // Red color for error states
+          pageColorLight: Colors.lightBlue[50], // A very light blue for page background
+          pageColorDark: Colors.blueGrey[900], // A dark blue-grey for contrasting elements
+          titleStyle: TextStyle(
+            color: Colors.blue.shade900, // Use shade property for constant colors
+            fontFamily: 'Quicksand',
+            letterSpacing: 2,
+          ),
+          // TextField style
+          textFieldStyle: TextStyle(
+            color: Colors.blueGrey.shade800, // Use shade property for constant colors
+            shadows: [Shadow(color: Colors.blue.shade100, blurRadius: 2)],
+          ),
+          // Button Theme
+          buttonTheme: LoginButtonTheme(
+            backgroundColor: Colors.blue.shade800, // Use shade property for constant colors
+            highlightColor: Colors.blue.shade600,
+            splashColor: Colors.blue.shade400,
+            elevation: 5.0,
+            highlightElevation: 4.0,
+          ),
+          // Input Theme
+          inputTheme: InputDecorationTheme(
+            // ... other properties
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20.0),
+              borderSide: BorderSide(color: Colors.blue.shade800), // Use shade property for constant colors
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20.0),
+              borderSide: BorderSide(color: Colors.blue.shade500),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25.0),
+              borderSide: BorderSide(color: Colors.blue.shade700),
+            ),
+            labelStyle: TextStyle(color: Colors.blue[800]), // Dark blue for label text
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25.0),
+              borderSide: BorderSide(color: Colors.redAccent), // Red color for error border
+            ),
+          ),
         ),
-        // Button Theme
-        buttonTheme: LoginButtonTheme(
-          backgroundColor: Colors.blue.shade800,
-          highlightColor: Colors.blue.shade600,
-          splashColor: Colors.blue.shade400,
-          elevation: 5.0,
-          highlightElevation: 4.0,
-        ),
-        // Input Theme
-        inputTheme: InputDecorationTheme(
-          // ... other properties
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20.0),
-            borderSide: BorderSide(color: Colors.blue.shade800),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20.0),
-            borderSide: BorderSide(color: Colors.blue.shade500),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(25.0),
-            borderSide: BorderSide(color: Colors.blue.shade700),
-          ),
-          labelStyle: TextStyle(color: Colors.blue[800]),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(25.0),
-            borderSide: BorderSide(color: Colors.redAccent),
-          ),
-        ),
+
       ),
     );
   }

@@ -17,6 +17,9 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0; // To keep track of the current index
   bool _isProfileComplete = false;
 
+  // Future to represent the profile completion check
+  late Future<void> _profileCheckFuture;
+
   // Pages to navigate between
   final List<Widget> _pages = [
     RoomsScreen(), // Replace with your RoomsScreen widget
@@ -27,10 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    checkProfileCompletion(); // Check if the profile is complete when the widget is created
+    _profileCheckFuture = checkProfileCompletion(); // Check if the profile is complete when the widget is created
   }
 
-  void checkProfileCompletion() async {
+  Future<void> checkProfileCompletion() async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
@@ -49,10 +52,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 700),
-
-        child: _pages[_currentIndex],
+      body: FutureBuilder<void>(
+        future: _profileCheckFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Display a loading indicator while the profile check is in progress.
+            return const Center(child: CircularProgressIndicator(color: Color.fromARGB(255, 17, 71, 160),));
+          } else {
+            // If the profile is complete, build the screen.
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 700),
+              child: _pages[_currentIndex],
+            );
+          }
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

@@ -25,7 +25,7 @@ class RoomsScreen extends StatelessWidget {
         stream: _firestore.collection('chat_rooms').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color.fromARGB(255, 17, 71, 160),));
           }
 
           if (snapshot.hasError) {
