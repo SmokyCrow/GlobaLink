@@ -78,24 +78,24 @@ class SignInScreen extends StatelessWidget {
 
 
         theme: LoginTheme(
-          primaryColor: Colors.lightBlue[700], // A shade of light blue for primary elements
-          accentColor: Colors.lightBlueAccent, // A lighter blue for accent elements
-          errorColor: Colors.redAccent, // Red color for error states
-          pageColorLight: Colors.lightBlue[50], // A very light blue for page background
-          pageColorDark: Colors.blueGrey[900], // A dark blue-grey for contrasting elements
+          primaryColor: Colors.lightBlue[700],
+          accentColor: Colors.lightBlueAccent,
+          errorColor: Colors.redAccent,
+          pageColorLight: Colors.lightBlue[50],
+          pageColorDark: Colors.blueGrey[900],
           titleStyle: TextStyle(
-            color: Colors.blue.shade900, // Use shade property for constant colors
+            color: Colors.blue.shade900,
             fontFamily: 'Quicksand',
             letterSpacing: 2,
           ),
           // TextField style
           textFieldStyle: TextStyle(
-            color: Colors.blueGrey.shade800, // Use shade property for constant colors
+            color: Colors.blueGrey.shade800,
             shadows: [Shadow(color: Colors.blue.shade100, blurRadius: 2)],
           ),
           // Button Theme
           buttonTheme: LoginButtonTheme(
-            backgroundColor: Colors.blue.shade800, // Use shade property for constant colors
+            backgroundColor: Colors.blue.shade800,
             highlightColor: Colors.blue.shade600,
             splashColor: Colors.blue.shade400,
             elevation: 5.0,
@@ -106,7 +106,7 @@ class SignInScreen extends StatelessWidget {
             // ... other properties
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
-              borderSide: BorderSide(color: Colors.blue.shade800), // Use shade property for constant colors
+              borderSide: BorderSide(color: Colors.blue.shade800),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(20.0),
@@ -116,10 +116,10 @@ class SignInScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(25.0),
               borderSide: BorderSide(color: Colors.blue.shade700),
             ),
-            labelStyle: TextStyle(color: Colors.blue[800]), // Dark blue for label text
+            labelStyle: TextStyle(color: Colors.blue[800]),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25.0),
-              borderSide: BorderSide(color: Colors.redAccent), // Red color for error border
+              borderSide: BorderSide(color: Colors.redAccent),
             ),
           ),
         ),

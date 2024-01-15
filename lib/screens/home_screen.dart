@@ -14,20 +14,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0; // To keep track of the current index
+  late int _currentIndex; // To keep track of the current index
   bool _isProfileComplete = false;
 
   // Pages to navigate between
   final List<Widget> _pages = [
-    RoomsScreen(), // Replace with your RoomsScreen widget
-    UsersScreen(), // Replace with your UsersScreen widget
-    const ProfileScreen(), // Already defined in your code
+    RoomsScreen(),
+    UsersScreen(),
+    ProfileScreen(),
   ];
 
   @override
   void initState() {
     super.initState();
     checkProfileCompletion(); // Check if the profile is complete when the widget is created
+    print(_isProfileComplete);
+    if(_isProfileComplete){
+      _currentIndex = 0;
+    }
+    else{
+      _currentIndex = 2;
+    }
   }
 
   void checkProfileCompletion() async {
@@ -37,10 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final userData = userDoc.data() as Map<String, dynamic>?;
       setState(() {
         _isProfileComplete = userData?['profileComplete'] ?? false;
-        if (!_isProfileComplete) {
-          // If the profile is not complete, force the current index to the profile tab
-          _currentIndex = 2; // Assuming the ProfileScreen is at index 2
-        }
+        print(_isProfileComplete);
       });
     }
   }
@@ -50,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 700),
+        duration: const Duration(milliseconds: 500),
 
         child: _pages[_currentIndex],
       ),
@@ -86,13 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _isProfileComplete = userData?['profileComplete'] ?? false;
       });
     }
-    print(_isProfileComplete);
-    if (_isProfileComplete || index == 2) { // Assuming index 2 is for ProfileScreen
-      setState(() {
-        _currentIndex = index;
-      });
+    if (_isProfileComplete || index == 2) {
+      // setState(() {
+      //   _currentIndex = index;
+      // });
     } else {
-      // Optionally show a dialog/message to the user indicating they need to complete their profile
       showDialog(
         context: context,
         builder: (context) {
