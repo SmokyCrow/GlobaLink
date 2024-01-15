@@ -5,6 +5,7 @@ import 'package:globalink/screens/profile_screen.dart';
 import 'package:globalink/screens/rooms_screen.dart';
 import 'package:globalink/screens/users_screen.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -13,22 +14,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late int _currentIndex = 0; // To keep track of the current index
+  int _currentIndex = 0; // To keep track of the current index
   bool _isProfileComplete = false;
 
   // Pages to navigate between
   final List<Widget> _pages = [
-    RoomsScreen(),
-    UsersScreen(),
-    ProfileScreen(),
+    RoomsScreen(), // Replace with your RoomsScreen widget
+    UsersScreen(), // Replace with your UsersScreen widget
+    const ProfileScreen(), // Already defined in your code
   ];
 
   @override
   void initState() {
-
     super.initState();
     checkProfileCompletion(); // Check if the profile is complete when the widget is created
-
   }
 
   void checkProfileCompletion() async {
@@ -38,8 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
       final userData = userDoc.data() as Map<String, dynamic>?;
       setState(() {
         _isProfileComplete = userData?['profileComplete'] ?? false;
-        if (_isProfileComplete) {
-          _currentIndex = 0; // If the profile is complete, switch to RoomsScreen
+        if (!_isProfileComplete) {
+          // If the profile is not complete, force the current index to the profile tab
+          _currentIndex = 2; // Assuming the ProfileScreen is at index 2
         }
       });
     }
@@ -50,7 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 700),
+
         child: _pages[_currentIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -68,15 +69,15 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'New Chat',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+              icon: Icon(Icons.person),
+              label: 'Profile'
           ),
         ],
       ),
     );
   }
 
-  void onTabTapped(int index) async {
+  void onTabTapped(int index) async{
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
     print(_isProfileComplete);
-    if (_isProfileComplete || index == 2) {
+    if (_isProfileComplete || index == 2) { // Assuming index 2 is for ProfileScreen
       setState(() {
         _currentIndex = index;
       });
