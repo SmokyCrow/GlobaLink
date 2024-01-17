@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:globalink/services/chat/chat_service.dart';
 import 'chat_screen.dart';
 
 class UsersScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final ChatService _chatService = ChatService();
 
   String _getListAsString(dynamic value) {
     if (value is List<dynamic>) {
@@ -111,8 +113,12 @@ class UsersScreen extends StatelessWidget {
           String native_language = _getListAsString(userData['native_language']) ?? '';
           String preferred_language = _getListAsString(userData['preferred_language']) ?? '';
 
-          if (native_language != currentUserNativeLanguage) {
-            await Future.delayed(Duration(milliseconds: 10)); 
+
+          bool hasConversation = await _chatService.hasConversation(currentId, id);
+
+
+          if (native_language != currentUserNativeLanguage && !hasConversation) {
+            await Future.delayed(Duration(milliseconds: 10));
 
             bool hasCommonInterest = currentUserInterests.any((interest) => interests.contains(interest));
 

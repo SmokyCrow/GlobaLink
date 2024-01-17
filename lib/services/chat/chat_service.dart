@@ -62,4 +62,22 @@ class ChatService {
       return _translationService.translate(message, "HU");
     }
   }
+
+  // Method to check if a conversation exists between two users
+  Future<bool> hasConversation(String user1Id, String user2Id) async {
+    try {
+      String chatRoomId1 = user1Id + "_" + user2Id;
+      String chatRoomId2 = user2Id + "_" + user1Id;
+
+      DocumentSnapshot chatRoomSnapshot1 = await _fireStore.collection('chat_rooms').doc(chatRoomId1).get();
+      DocumentSnapshot chatRoomSnapshot2 = await _fireStore.collection('chat_rooms').doc(chatRoomId2).get();
+      bool b1 = chatRoomSnapshot1.exists;
+      bool b2 = chatRoomSnapshot2.exists;
+      return b1 || b2;
+
+    } catch (e) {
+      print("Error checking conversation: $e");
+      return false;
+    }
+  }
 }
