@@ -19,6 +19,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   bool _isLoadingMessages = true;
+  bool _showOriginalMessage = false;
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -75,41 +76,42 @@ class _ChatScreenState extends State<ChatScreen> {
         title: _isLoadingUserData
             ? const Text("Loading...")
             : GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      SlideRightRoute(
-                          page: PartnerProfileScreen(
-                              userId: widget.recieverUserID)));
-                },
-                child: Row(
-                  children: [
-                    _profilePictureUrl != ''
-                        ? CircleAvatar(
-                            backgroundImage: NetworkImage(_profilePictureUrl),
-                          )
-                        : const CircleAvatar(
-                            // Use a default image if profilePictureUrl is ''
-                            backgroundImage:
-                                AssetImage('images/default_prof_picture.png'),
-                          ),
-                    const SizedBox(width: 10),
-                    Text(
-                      _username,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+          onTap: () {
+            Navigator.push(
+                context,
+                SlideRightRoute(
+                    page: PartnerProfileScreen(
+                        userId: widget.recieverUserID)));
+          },
+          child: Row(
+            children: [
+              _profilePictureUrl != ''
+                  ? CircleAvatar(
+                backgroundImage: NetworkImage(_profilePictureUrl),
+              )
+                  : const CircleAvatar(
+                // Use a default image if profilePictureUrl is ''
+                backgroundImage: AssetImage(
+                    'images/default_prof_picture.png'),
               ),
+              const SizedBox(width: 10),
+              Text(
+                _username,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Column(
         children: [
           Expanded(
             child: GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).unfocus();
-                },
-                child: _buildMessageList()),
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: _buildMessageList(),
+            ),
           ),
           _buildMessageInput(),
           const SizedBox(height: 25),
@@ -119,45 +121,36 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageList() {
-    // Use a stable stream reference
     final messageStream = _chatService.getMessages(
         widget.recieverUserID, _firebaseAuth.currentUser!.uid);
 
     return StreamBuilder<QuerySnapshot>(
       stream: messageStream,
       builder: (context, snapshot) {
-        // Check if we are still waiting for the first snapshot
         if (_isLoadingMessages &&
             snapshot.connectionState == ConnectionState.waiting) {
-          // If so, show the loading indicator
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Once the data is loaded for the first time, set the loading state to false
         if (snapshot.connectionState == ConnectionState.active) {
           _isLoadingMessages = false;
         }
 
-        // Handle errors
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
 
-        // Handle no data
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Center(child: Text("No messages yet."));
         }
 
-        // Get the message documents
         var messageDocs = snapshot.data!.docs;
 
-        // Now we return the ListView without showing the loading indicator
         return ListView.builder(
           controller: scrollController,
           reverse: true,
           itemCount: messageDocs.length,
           itemBuilder: (context, index) {
-            // Build the message item with the document snapshot
             return _buildMessageItem(messageDocs[index]);
           },
         );
@@ -166,50 +159,90 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageItem(DocumentSnapshot document) {
-    // Extract the message data from the document snapshot.
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     bool isSender = data['senderId'] == _firebaseAuth.currentUser!.uid;
 
-    // Choose between the original and translated message.
-    String displayMessage = isSender
-        ? data['message']
-        : (data['translatedMessage'] ?? data['message']);
-
-    // Style the chat bubble based on the sender.
     return Align(
       alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: EdgeInsets.only(
           top: 4.0,
           bottom: 4.0,
-          left: isSender ? 50.0 : 15.0, // Indent the sender's messages more.
-          right: isSender ? 15.0 : 50.0, // Indent the receiver's messages more.
+          left: isSender ? 50.0 : 15.0,
+          right: isSender ? 15.0 : 50.0,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
         decoration: BoxDecoration(
           color: isSender ? Colors.blue[100] : Colors.grey[200],
-          // Conditional color based on the sender.
-          borderRadius:
-              BorderRadius.circular(20), // Rounded corners for the chat bubble.
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Text(
-          displayMessage,
-          style: const TextStyle(
-              fontSize: 16.0), // Standard text size for messages.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              (_showOriginalMessage || isSender)
+                  ? data['message']
+                  : data['translatedMessage'],
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            SizedBox(height: 5.0),
+            if (!isSender)
+              IconButton(
+                onPressed: () {
+                  _showOriginalMessageForMessage(data['message']);
+                },
+                icon: Icon(Icons.translate),
+              ),
+          ],
         ),
       ),
     );
   }
 
+  void _showOriginalMessageForMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Original Message",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18.0,
+            ),
+          ),
+          content: Container(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              message,
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Close",
+                style: TextStyle(color: Colors.blue.shade900),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildMessageInput() {
-    // Style the message input field to be more in line with the provided example.
     return Container(
       padding: const EdgeInsets.fromLTRB(15.0, 5.0, 5.0, 5.0),
       margin: const EdgeInsets.symmetric(horizontal: 15.0),
       decoration: BoxDecoration(
-        color: Colors.grey[200], // Background color for the input area.
-        borderRadius:
-            BorderRadius.circular(30), // Rounded corners for the input field.
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
         children: [
@@ -217,20 +250,17 @@ class _ChatScreenState extends State<ChatScreen> {
             child: TextField(
               controller: _messageController,
               decoration: const InputDecoration(
-                hintText: 'Type a message', // Placeholder text.
-                border: InputBorder.none, // No border.
+                hintText: 'Type a message',
+                border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20.0,
-                    vertical: 10.0), // Padding inside the input field.
+                    horizontal: 20.0, vertical: 10.0),
               ),
-              textInputAction:
-                  TextInputAction.send, // Keyboard action for sending.
+              textInputAction: TextInputAction.send,
             ),
           ),
           IconButton(
             onPressed: sendMessage,
-            icon: Icon(Icons.send,
-                color: Colors.blue.shade900), // Send icon button.
+            icon: Icon(Icons.send, color: Colors.blue.shade900),
           ),
         ],
       ),
