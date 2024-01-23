@@ -9,6 +9,8 @@ class UsersScreen extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ChatService _chatService = ChatService();
 
+  UsersScreen({super.key});
+
   String _getListAsString(dynamic value) {
     if (value is List<dynamic>) {
       return value.join(', ');
@@ -20,16 +22,16 @@ class UsersScreen extends StatelessWidget {
   }
 
 
-  Widget _buildUserCard(String username, String interests, String native_language, String preferred_language) {
-    List<dynamic> list_interests = interests.split(", ");
+  Widget _buildUserCard(String username, String interests, String nativeLanguage, String preferredLanguage) {
+    List<dynamic> listInterests = interests.split(", ");
     return Card(
-      margin: EdgeInsets.all(8),
+      margin: const EdgeInsets.all(8),
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -37,49 +39,49 @@ class UsersScreen extends StatelessWidget {
             Center(
               child: Text(
                 username,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             // Vignettes pour les centres d'intérêts
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Interest: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Wrap(
                   alignment: WrapAlignment.start,
                   spacing: 4,
                   runSpacing: 4,
-                  children: list_interests.map((interest) {
+                  children: listInterests.map((interest) {
                     return Container(
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 17, 71, 160),
+                        color: const Color.fromARGB(255, 17, 71, 160),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         interest,
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     );
                   }).toList(),
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             // Reste du contenu
             Text(
-              'Language Preference: ${preferred_language.toUpperCase()}',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              'Language Preference: ${preferredLanguage.toUpperCase()}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
-              'Language Native: ${native_language.toUpperCase()}',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              'Language Native: ${nativeLanguage.toUpperCase()}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -101,24 +103,24 @@ class UsersScreen extends StatelessWidget {
 
           // Skip the current user
           if (userId == _auth.currentUser!.uid) {
-            currentUserNativeLanguage = _getListAsString(userData['native_language']) ?? '';
-            currentUserInterests = List<String>.from(userData['interests']) ?? [];
-            currentId = _getListAsString(userData['uid']) ?? '';
+            currentUserNativeLanguage = _getListAsString(userData['native_language']);
+            currentUserInterests = List<String>.from(userData['interests']);
+            currentId = _getListAsString(userData['uid']);
             return Container();
           }
 
-          String id = _getListAsString(userData['uid']) ?? '';
-          String username = _getListAsString(userData['username']) ?? '';
-          String interests = _getListAsString(userData['interests']) ?? '';
-          String native_language = _getListAsString(userData['native_language']) ?? '';
-          String preferred_language = _getListAsString(userData['preferred_language']) ?? '';
+          String id = _getListAsString(userData['uid']);
+          String username = _getListAsString(userData['username']);
+          String interests = _getListAsString(userData['interests']);
+          String nativeLanguage = _getListAsString(userData['native_language']);
+          String preferredLanguage = _getListAsString(userData['preferred_language']);
 
 
           bool hasConversation = await _chatService.hasConversation(currentId, id);
 
 
-          if (native_language != currentUserNativeLanguage && !hasConversation) {
-            await Future.delayed(Duration(milliseconds: 10));
+          if (nativeLanguage != currentUserNativeLanguage && !hasConversation) {
+            await Future.delayed(const Duration(milliseconds: 10));
 
             bool hasCommonInterest = currentUserInterests.any((interest) => interests.contains(interest));
 
@@ -135,7 +137,7 @@ class UsersScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: _buildUserCard(username, interests, native_language, preferred_language),
+                child: _buildUserCard(username, interests, nativeLanguage, preferredLanguage),
               );
             }
           }
@@ -145,7 +147,7 @@ class UsersScreen extends StatelessWidget {
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
@@ -167,7 +169,7 @@ class UsersScreen extends StatelessWidget {
       stream: _firestore.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
@@ -175,12 +177,12 @@ class UsersScreen extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(child: Text('No users found'));
+          return const Center(child: Text('No users found'));
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('New Chat', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
+            title: const Text('New Chat', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 30)),
             backgroundColor: Colors.white,
           ),
           body: SingleChildScrollView(

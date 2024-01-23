@@ -66,8 +66,8 @@ class ChatService {
   // Method to check if a conversation exists between two users
   Future<bool> hasConversation(String user1Id, String user2Id) async {
     try {
-      String chatRoomId1 = user1Id + "_" + user2Id;
-      String chatRoomId2 = user2Id + "_" + user1Id;
+      String chatRoomId1 = "${user1Id}_$user2Id";
+      String chatRoomId2 = "${user2Id}_$user1Id";
 
       DocumentSnapshot chatRoomSnapshot1 = await _fireStore.collection('chat_rooms').doc(chatRoomId1).get();
       DocumentSnapshot chatRoomSnapshot2 = await _fireStore.collection('chat_rooms').doc(chatRoomId2).get();

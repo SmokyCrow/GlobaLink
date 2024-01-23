@@ -119,7 +119,7 @@ class SignInScreen extends StatelessWidget {
             labelStyle: TextStyle(color: Colors.blue[800]), // Dark blue for label text
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(25.0),
-              borderSide: BorderSide(color: Colors.redAccent), // Red color for error border
+              borderSide: const BorderSide(color: Colors.redAccent), // Red color for error border
             ),
           ),
         ),

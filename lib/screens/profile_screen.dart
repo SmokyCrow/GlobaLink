@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _usernameController = TextEditingController();
   List<String> allInterests = []; // List of all interests fetched from Firebase
   List<String> userInterests = []; // User's current interests
-  Set<String> selectedInterests = Set(); // Selected interests
+  Set<String> selectedInterests = {}; // Selected interests
   List<String> allLanguages = []; // List of all available languages
   String? selectedLanguage; // Selected native language
   String? selectedPreferredLanguage; // User's preferred language
@@ -43,9 +42,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           setState(() {
             profilePictureUrl = data['profile_picture_url'] ?? '';
             selectedLanguage =
-                data['native_language'] ?? null; // Update selectedLanguage
-            selectedPreferredLanguage = data['preferred_language'] ??
-                null; // Update selectedPreferredLanguage
+                data['native_language']; // Update selectedLanguage
+            selectedPreferredLanguage = data['preferred_language']; // Update selectedPreferredLanguage
           });
         }
       });
@@ -94,7 +92,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             updatedData['profile_picture_url'] = downloadUrl;
           } catch (e) {
             // Handle any errors here
-            print("Error uploading profile picture: $e");
           }
         }
 
@@ -127,7 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } catch (e) {
         // If an error occurs, stop the loading indicator and show an error message
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile.')),
+          const SnackBar(content: Text('Failed to update profile.')),
         );
       } finally {
         setState(() {
@@ -173,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Profile',
+        title: const Text('Your Profile',
             style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -184,7 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: const Icon(Icons.logout),
           ),
         ],
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
       ),
       body: FutureBuilder(
@@ -203,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               } else {
                 // Data is fetched so display the profile information
                 return _isUpdating
-                    ? Center(
+                    ? const Center(
                     child: CircularProgressIndicator(
                       color: Color.fromARGB(255, 17, 71, 160),
                     ))
@@ -218,28 +215,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget buildProfileContent() {
     // The content of the profile screen that depends on the loaded data
     return ListView(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       children: [
-        SizedBox(height: 20), // Add space above the profile picture
+        const SizedBox(height: 20), // Add space above the profile picture
         GestureDetector(
           onTap: uploadProfilePicture,
           child: CircleAvatar(
             radius: 60,
             backgroundColor: Colors.blue.shade900,
             backgroundImage: (selectedProfilePicture != null)
-                ? FileImage(selectedProfilePicture!) as ImageProvider<Object>
+                ? FileImage(selectedProfilePicture!)
                 : (profilePictureUrl.isNotEmpty)
                 ? NetworkImage(profilePictureUrl) as ImageProvider<Object>
                 : null,
             child: (profilePictureUrl.isEmpty && selectedProfilePicture == null)
-                ? Icon(Icons.add_a_photo, color: Colors.white)
+                ? const Icon(Icons.add_a_photo, color: Colors.white)
                 : null,
           ),
         ),
-        SizedBox(height: 40), // Add space below the profile picture
+        const SizedBox(height: 40), // Add space below the profile picture
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          margin: EdgeInsets.only(bottom: 15), // Space between input fields
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          margin: const EdgeInsets.only(bottom: 15), // Space between input fields
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -247,18 +244,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               BoxShadow(
                 color: Colors.grey.shade300,
                 blurRadius: 10,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              title: Text('Your Interests'),
+              title: const Text('Your Interests'),
               textColor: Colors.blue.shade900,
               iconColor: Colors.blue.shade900,
               children: [
-                Container(
+                SizedBox(
                   height: 200, // Fixed height for scrollable area
                   child: SingleChildScrollView(
                     child: Column(
@@ -275,9 +272,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
-                            margin: EdgeInsets.symmetric(vertical: 4),
+                            margin: const EdgeInsets.symmetric(vertical: 4),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.blue.shade900
@@ -300,8 +297,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          margin: EdgeInsets.only(bottom: 15), // Space between input fields
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          margin: const EdgeInsets.only(bottom: 15), // Space between input fields
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -309,18 +306,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               BoxShadow(
                 color: Colors.grey.shade300,
                 blurRadius: 10,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              title: Text('Your Native Language'),
+              title: const Text('Your Native Language'),
               textColor: Colors.blue.shade900,
               iconColor: Colors.blue.shade900,
               children: [
-                Container(
+                SizedBox(
                   height: 200, // Fixed height for scrollable area
                   child: SingleChildScrollView(
                     child: Column(
@@ -343,9 +340,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
-                            margin: EdgeInsets.symmetric(vertical: 4),
+                            margin: const EdgeInsets.symmetric(vertical: 4),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.blue.shade900
@@ -368,8 +365,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          margin: EdgeInsets.only(bottom: 15), // Space between input fields
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          margin: const EdgeInsets.only(bottom: 15), // Space between input fields
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -377,18 +374,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               BoxShadow(
                 color: Colors.grey.shade300,
                 blurRadius: 10,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-              title: Text('Preferred Language'),
+              title: const Text('Preferred Language'),
               textColor: Colors.blue.shade900,
               iconColor: Colors.blue.shade900,
               children: [
-                Container(
+                SizedBox(
                   height: 200, // Fixed height for scrollable area
                   child: SingleChildScrollView(
                     child: Column(
@@ -409,9 +406,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             });
                           },
                           child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 15),
-                            margin: EdgeInsets.symmetric(vertical: 4),
+                            margin: const EdgeInsets.symmetric(vertical: 4),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.blue.shade900
@@ -433,9 +430,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        SizedBox(height: 20), // Add space above the save button
+        const SizedBox(height: 20), // Add space above the save button
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -443,7 +440,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               BoxShadow(
                 color: Colors.grey.shade300,
                 blurRadius: 10,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -457,7 +454,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(top: 20),
+          margin: const EdgeInsets.only(top: 20),
           child: ElevatedButton(
             onPressed: () async {
               await updateUserProfile(_usernameController.text);
