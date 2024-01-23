@@ -19,7 +19,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   bool _isLoadingMessages = true;
-  bool _showOriginalMessage = false;
+  final Map<String, bool> _messageToggleStates = {};
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -76,32 +76,32 @@ class _ChatScreenState extends State<ChatScreen> {
         title: _isLoadingUserData
             ? const Text("Loading...")
             : GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                SlideRightRoute(
-                    page: PartnerProfileScreen(
-                        userId: widget.recieverUserID)));
-          },
-          child: Row(
-            children: [
-              _profilePictureUrl != ''
-                  ? CircleAvatar(
-                backgroundImage: NetworkImage(_profilePictureUrl),
-              )
-                  : const CircleAvatar(
-                // Use a default image if profilePictureUrl is ''
-                backgroundImage: AssetImage(
-                    'images/default_prof_picture.png'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      SlideRightRoute(
+                          page: PartnerProfileScreen(
+                              userId: widget.recieverUserID)));
+                },
+                child: Row(
+                  children: [
+                    _profilePictureUrl != ''
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(_profilePictureUrl),
+                          )
+                        : const CircleAvatar(
+                            // Use a default image if profilePictureUrl is ''
+                            backgroundImage:
+                                AssetImage('images/default_prof_picture.png'),
+                          ),
+                    const SizedBox(width: 10),
+                    Text(
+                      _username,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 10),
-              Text(
-                _username,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
       ),
       body: Column(
         children: [
@@ -161,78 +161,39 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     bool isSender = data['senderId'] == _firebaseAuth.currentUser!.uid;
+    String messageId = document.id; // The document ID is used as the message ID
 
-    return Align(
-      alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.only(
-          top: 4.0,
-          bottom: 4.0,
-          left: isSender ? 50.0 : 15.0,
-          right: isSender ? 15.0 : 50.0,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-        decoration: BoxDecoration(
-          color: isSender ? Colors.blue[100] : Colors.grey[200],
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              (_showOriginalMessage || isSender)
-                  ? data['message']
-                  : data['translatedMessage'],
-              style: const TextStyle(
-                fontSize: 16.0,
-              ),
-            ),
-            SizedBox(height: 5.0),
-            if (!isSender)
-              IconButton(
-                onPressed: () {
-                  _showOriginalMessageForMessage(data['message']);
-                },
-                icon: Icon(Icons.translate),
-              ),
-          ],
+    // Determine if the original message should be shown, default to false for receiver
+    bool showOriginal = _messageToggleStates[messageId] ?? isSender;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _messageToggleStates[messageId] =
+              !(_messageToggleStates[messageId] ?? isSender);
+        });
+      },
+      child: Align(
+        alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          margin: EdgeInsets.only(
+            top: 4.0,
+            bottom: 4.0,
+            left: isSender ? 50.0 : 15.0,
+            right: isSender ? 15.0 : 50.0,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+          decoration: BoxDecoration(
+            color: isSender ? Colors.blue[100] : Colors.grey[200],
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            // Ternary expression to determine which message to show
+            showOriginal ? data['message'] : data['translatedMessage'],
+            style: const TextStyle(fontSize: 16.0),
+          ),
         ),
       ),
-    );
-  }
-
-  void _showOriginalMessageForMessage(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            "Original Message",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0,
-            ),
-          ),
-          content: Container(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              message,
-              style: TextStyle(fontSize: 16.0),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                "Close",
-                style: TextStyle(color: Colors.blue.shade900),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -252,8 +213,8 @@ class _ChatScreenState extends State<ChatScreen> {
               decoration: const InputDecoration(
                 hintText: 'Type a message',
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20.0, vertical: 10.0),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               ),
               textInputAction: TextInputAction.send,
             ),
