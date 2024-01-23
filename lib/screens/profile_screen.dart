@@ -24,14 +24,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? selectedPreferredLanguage; // User's preferred language
   String profilePictureUrl = ''; // Profile pictures url
   File? selectedProfilePicture; // The selected profile picture
-  bool _isUpdating = false;
   late Future _profileDataFuture; // Future to load profile data only once
 
   @override
   void initState() {
     super.initState();
-    _profileDataFuture = _fetchProfileData();
+    _profileDataFuture = _fetchProfileData().then((_) {
+      // Show the welcome dialog only if certain profile data is not filled
+      if (_usernameController.text.isEmpty || userInterests.isEmpty) {
+        showWelcomeDialog();
+      }
+    });
   }
+
+  void showWelcomeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Welcome to GlobaLink!'),
+        content: const SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text('Before diving in, please complete your profile details. This is crucial for full access to our app\'s features.'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Navigation Made Easy: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Seamlessly switch between different sections using the bottom navigation bar.'),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Connect and Chat: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Discover and connect with new people on the \'New Chat\' page. Just click on a user to start a conversation.'),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Personalize Your Profile: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Customize your profile anytime, adding a personal touch to your online presence.'),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Know Who You\'re Chatting With: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Click on their name in the chat room to view their profile.'),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Message Clarity: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'Switch between original and translated messages with a simple click, ensuring clear communication.'),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text('We\'re excited to have you here and can\'t wait for you to explore GlobaLink!'),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
 
   Future<void> _fetchProfileData() async {
     if (user != null) {
@@ -68,9 +166,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future updateUserProfile(String newUsername) async {
     if (user != null) {
-      setState(() {
-        _isUpdating = true; // Start the loading indicator
-      });
 
       Map<String, dynamic> updatedData = {
         'username': newUsername,
@@ -126,11 +221,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to update profile.')),
         );
-      } finally {
-        setState(() {
-          _isUpdating =
-          false; // Stop the loading indicator regardless of the result
-        });
       }
     }
   }
@@ -189,22 +279,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
-            case ConnectionState.waiting:
-              return const Center(
-                  child: CircularProgressIndicator(
-                    color: Color.fromARGB(255, 17, 71, 160),
-                  ));
+
             default:
               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
                 // Data is fetched so display the profile information
-                return _isUpdating
-                    ? const Center(
-                    child: CircularProgressIndicator(
-                      color: Color.fromARGB(255, 17, 71, 160),
-                    ))
-                    : buildProfileContent();
+                return buildProfileContent();
               }
           }
         },

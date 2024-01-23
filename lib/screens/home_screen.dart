@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,23 +16,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0; // To keep track of the current index
+  int _currentIndex = 0;
   bool _isProfileComplete = false;
+  bool _isLoading = true;
 
-  // Future to represent the profile completion check
   late Future<void> _profileCheckFuture;
 
-  // Pages to navigate between
   final List<Widget> _pages = [
-    RoomsScreen(), // Replace with your RoomsScreen widget
-    UsersScreen(), // Replace with your UsersScreen widget
-    const ProfileScreen(), // Already defined in your code
+    RoomsScreen(),
+    UsersScreen(),
+    const ProfileScreen(),
   ];
 
   @override
   void initState() {
     super.initState();
-    _profileCheckFuture = checkProfileCompletion(); // Check if the profile is complete when the widget is created
+    _profileCheckFuture = checkProfileCompletion();
+    Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   Future<void> checkProfileCompletion() async {
@@ -41,8 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _isProfileComplete = userData?['profileComplete'] ?? false;
         if (!_isProfileComplete) {
-          // If the profile is not complete, force the current index to the profile tab
-          _currentIndex = 2; // Assuming the ProfileScreen is at index 2
+          _currentIndex = 2;
         }
       });
     }
@@ -52,20 +57,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: FutureBuilder<void>(
-        future: _profileCheckFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Display a loading indicator while the profile check is in progress.
-            return const Center(child: CircularProgressIndicator(color: Color.fromARGB(255, 17, 71, 160),));
-          } else {
-            // If the profile is complete, build the screen.
-            return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 700),
-              child: _pages[_currentIndex],
-            );
-          }
-        },
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 500),
+        child: _isLoading
+            ? const Center(key: ValueKey('loading'), child: CircularProgressIndicator())
+            : FutureBuilder<void>(
+          future: _profileCheckFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              return _pages[_currentIndex];
+            }
+          },
+          key: const ValueKey('content'),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
