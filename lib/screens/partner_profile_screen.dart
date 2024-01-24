@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../services/translation/language_map.dart';
+
 class PartnerProfileScreen extends StatelessWidget {
   final String userId;
 
@@ -61,7 +63,7 @@ class PartnerProfileScreen extends StatelessWidget {
                   // Language Section
                   const Text('Language:', textAlign: TextAlign.center),
                   Chip(
-                    label: Text(nativeLanguage),
+                    label: Text(languageMap[nativeLanguage] ?? nativeLanguage),
                   ),
                 ],
               ),

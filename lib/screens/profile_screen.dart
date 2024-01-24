@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:globalink/services/translation/language_map.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -430,7 +431,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Text(language,
+                            child: Text(languageMap[language] ?? language,
                                 style: TextStyle(
                                     color: isSelected
                                         ? Colors.white
@@ -496,7 +497,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   : Colors.white,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Text(language,
+                            child: Text(languageMap[language] ?? language,
                                 style: TextStyle(
                                     color: isSelected
                                         ? Colors.white
