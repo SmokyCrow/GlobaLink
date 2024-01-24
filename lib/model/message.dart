@@ -6,6 +6,7 @@ class Message {
   final String receiverId;
   final String message;
   final String translatedMessage; // New field
+  final String preferredTranslatedMessage;
   final Timestamp timeStamp;
 
   Message({
@@ -14,6 +15,7 @@ class Message {
     required this.receiverId,
     required this.message,
     this.translatedMessage = '', // Default to empty string
+    this.preferredTranslatedMessage = '',
     required this.timeStamp,
   });
 
@@ -24,6 +26,7 @@ class Message {
       'receiverId': receiverId,
       'message': message,
       'translatedMessage': translatedMessage, // Include in map
+      'preferredTranslatedMessage' : preferredTranslatedMessage,
       'timestamp': timeStamp,
     };
   }

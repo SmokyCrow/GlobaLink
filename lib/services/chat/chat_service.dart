@@ -17,8 +17,12 @@ class ChatService {
     DocumentSnapshot receiverSnapshot = await _fireStore.collection('users').doc(receiverId).get();
     String receiverLanguage = receiverSnapshot['native_language'];
 
+    DocumentSnapshot senderSnapshot = await _fireStore.collection('users').doc(currentUserId).get();
+    String senderPreferredLanguage = senderSnapshot['preferred_language'];
+
     // Translate the message here if the receiver needs it
     String translatedMessage = await _translationService.translate(message, receiverLanguage);
+    String preferredTranslatedMessage = await _translationService.translate(message, senderPreferredLanguage);
 
     Message newMessage = Message(
       senderId: currentUserId,
@@ -26,6 +30,7 @@ class ChatService {
       receiverId: receiverId,
       message: message,
       translatedMessage: translatedMessage, // Set the translated message
+      preferredTranslatedMessage: preferredTranslatedMessage,
       timeStamp: timeStamp,
     );
 
