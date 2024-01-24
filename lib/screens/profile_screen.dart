@@ -311,7 +311,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ? NetworkImage(profilePictureUrl) as ImageProvider<Object>
                 : null,
             child: (profilePictureUrl.isEmpty && selectedProfilePicture == null)
-                ? const Icon(Icons.add_a_photo, color: Colors.white)
+                ? const ClipOval(child: Icon(Icons.add_a_photo, color: Colors.white))
                 : null,
           ),
         ),

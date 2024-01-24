@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:globalink/services/chat/chat_service.dart';
+import '../services/translation/language_map.dart';
 import 'chat_screen.dart';
 
 class UsersScreen extends StatelessWidget {
@@ -22,7 +23,7 @@ class UsersScreen extends StatelessWidget {
   }
 
 
-  Widget _buildUserCard(String username, String interests, String nativeLanguage, String preferredLanguage) {
+  Widget _buildUserCard(String username, String interests, String nativeLanguage, String preferredLanguage, String profilePictureUrl) {
     List<dynamic> listInterests = interests.split(", ");
     return Card(
       margin: const EdgeInsets.all(8),
@@ -36,6 +37,15 @@ class UsersScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Centered username without label
+            // Profile picture
+            Center(
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(profilePictureUrl.isNotEmpty ? profilePictureUrl : 'images/default_prof_picture.png'),
+                radius: 30, // Adjust the size as needed
+              ),
+            ),
+            const SizedBox(height: 10),
+            // Username
             Center(
               child: Text(
                 username,
@@ -75,12 +85,12 @@ class UsersScreen extends StatelessWidget {
             const SizedBox(height: 8),
             // Reste du contenu
             Text(
-              'Language Preference: ${preferredLanguage.toUpperCase()}',
+              'Language Preference: ${languageMap[preferredLanguage] ?? preferredLanguage.toUpperCase()}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
             Text(
-              'Language Native: ${nativeLanguage.toUpperCase()}',
+              'Language Native: ${languageMap[nativeLanguage] ?? nativeLanguage.toUpperCase()}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -114,6 +124,7 @@ class UsersScreen extends StatelessWidget {
           String interests = _getListAsString(userData['interests']);
           String nativeLanguage = _getListAsString(userData['native_language']);
           String preferredLanguage = _getListAsString(userData['preferred_language']);
+          String profilePictureUrl = _getListAsString(userData['profile_picture_url']);
 
 
           bool hasConversation = await _chatService.hasConversation(currentId, id);
@@ -137,7 +148,7 @@ class UsersScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: _buildUserCard(username, interests, nativeLanguage, preferredLanguage),
+                child: _buildUserCard(username, interests, nativeLanguage, preferredLanguage, profilePictureUrl),
               );
             }
           }

@@ -190,7 +190,9 @@ class _ChatScreenState extends State<ChatScreen> {
           child: Text(
             // Ternary expression to determine which message to show
             showOriginal ? data['message'] : data['translatedMessage'],
-            style: const TextStyle(fontSize: 16.0),
+            style: const TextStyle(
+                fontSize: 16.0,
+            ),
           ),
         ),
       ),
