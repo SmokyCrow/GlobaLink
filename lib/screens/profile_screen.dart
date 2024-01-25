@@ -205,8 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             userInterests.isNotEmpty &&
             (profilePictureUrl.isNotEmpty ||
                 updatedData['profile_picture_url'] != null) &&
-            selectedLanguage != null &&
-            selectedPreferredLanguage != null) {
+            selectedLanguage != null) {
           updatedData['profileComplete'] = true;
         } else {
           updatedData['profileComplete'] = false;
@@ -413,8 +412,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: () {
                             setState(() {
                               if (isSelected) {
-                                selectedLanguage =
-                                null; // Deselect the language
+                                // Nothig happens
                               } else {
                                 selectedLanguage =
                                     language; // Select the language
@@ -480,7 +478,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           onTap: () {
                             setState(() {
                               if (isSelected) {
-                                // Nothing happens
+                                selectedPreferredLanguage = null;
                               } else {
                                 selectedPreferredLanguage =
                                     language; // Select the language
