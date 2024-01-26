@@ -166,11 +166,22 @@ class _ChatScreenState extends State<ChatScreen> {
     // Determine if the original message should be shown, default to false for receiver
     bool showOriginal = _messageToggleStates[messageId] ?? isSender;
 
+    // Determine which message to display
+    String displayMessage;
+    if (showOriginal) {
+      displayMessage = data['message'];
+    } else if (data.containsKey('preferredTranslatedMessage') && data['preferredTranslatedMessage'].isNotEmpty) {
+      // Show preferred translated message if available
+      displayMessage = data['preferredTranslatedMessage'];
+    } else {
+      // Fallback to the regular translated message
+      displayMessage = data['translatedMessage'] ?? data['message'];
+    }
+
     return GestureDetector(
       onTap: () {
         setState(() {
-          _messageToggleStates[messageId] =
-              !(_messageToggleStates[messageId] ?? isSender);
+          _messageToggleStates[messageId] = !(_messageToggleStates[messageId] ?? isSender);
         });
       },
       child: Align(
@@ -188,10 +199,9 @@ class _ChatScreenState extends State<ChatScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            // Ternary expression to determine which message to show
-            showOriginal ? data['message'] : data['translatedMessage'],
+            displayMessage,
             style: const TextStyle(
-                fontSize: 16.0,
+              fontSize: 16.0,
             ),
           ),
         ),

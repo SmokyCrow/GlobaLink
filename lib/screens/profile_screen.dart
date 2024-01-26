@@ -196,9 +196,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               selectedLanguage; // Include the selected native language
         }
 
-        if (selectedPreferredLanguage != null) {
-          updatedData['preferred_language'] = selectedPreferredLanguage;
-        }
+        // if (selectedPreferredLanguage != null) {
+        //   updatedData['preferred_language'] = selectedPreferredLanguage;
+        // }
+
+        updatedData['preferred_language'] = selectedPreferredLanguage;
 
         if (newUsername.isNotEmpty &&
             newUsername != "" &&
