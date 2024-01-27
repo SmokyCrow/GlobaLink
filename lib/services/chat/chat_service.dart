@@ -16,21 +16,30 @@ class ChatService {
     // Retrieve the receiver's native language
     DocumentSnapshot receiverSnapshot = await _fireStore.collection('users').doc(receiverId).get();
     String receiverLanguage = receiverSnapshot['native_language'];
+    String receiverPreferredLanguage = receiverSnapshot['preferred_language'];
+
 
     DocumentSnapshot senderSnapshot = await _fireStore.collection('users').doc(currentUserId).get();
     String senderPreferredLanguage = senderSnapshot['preferred_language'];
 
     // Translate the message here if the receiver needs it
-    String translatedMessage = await _translationService.translate(message, receiverLanguage);
-    String preferredTranslatedMessage = await _translationService.translate(message, senderPreferredLanguage);
+
+    String receiverTranslated = await _translationService.translate(message, receiverLanguage);
+    String receiverPreferredTranslated = await _translationService.translate(message, receiverPreferredLanguage);
+    String senderTranslated = await _translationService.translate(message, receiverLanguage);
+    if(senderPreferredLanguage != ""){
+      senderTranslated = await _translationService.translate(message, senderPreferredLanguage);
+    }
+
 
     Message newMessage = Message(
       senderId: currentUserId,
       senderEmail: currentUserEmail,
       receiverId: receiverId,
       message: message,
-      translatedMessage: translatedMessage, // Set the translated message
-      preferredTranslatedMessage: preferredTranslatedMessage,
+      receiverTranslated: receiverTranslated, // Set the translated message
+      senderTranslated: senderTranslated,
+      receiverPreferredTranslated: receiverPreferredTranslated,
       timeStamp: timeStamp,
     );
 
@@ -85,4 +94,51 @@ class ChatService {
       return false;
     }
   }
+
+  Future<void> updatePreferredTranslations(String newPreferredLanguage, String userId) async {
+    final QuerySnapshot messagesSnapshot = await _fireStore
+        .collectionGroup('messages').get();
+
+    for (var doc in messagesSnapshot.docs) {
+      var data = doc.data() as Map<String, dynamic>;
+      bool isSender = data['senderId'] == userId;
+      bool isReceiver = data['receiverId'] == userId;
+
+      // Check if the user is the sender or receiver
+      if (isSender) {
+        // Logic when the sender is updating the preferred language
+        if (newPreferredLanguage != "none") {
+          String newSenderTranslation = await _translationService.translate(
+              data['message'], newPreferredLanguage);
+          await doc.reference.update({
+            'senderTranslated': newSenderTranslation,
+          });
+        } else {
+          // Revert to the receiver's translation if the preferred language is set to "none"
+          await doc.reference.update({
+            'senderTranslated': data['receiverTranslated'],
+          });
+        }
+      } else if (isReceiver) {
+        // Logic when the receiver is updating the preferred language
+        if (newPreferredLanguage != "none") {
+          String newReceiverPreferredTranslation = await _translationService.translate(
+              data['message'], newPreferredLanguage);
+          await doc.reference.update({
+            'receiverPreferredTranslated': newReceiverPreferredTranslation,
+          });
+        } else {
+          // Revert to the original receiver translation if the preferred language is set to "none"
+          await doc.reference.update({
+            'receiverPreferredTranslated': data['message'],
+          });
+        }
+      }
+    }
+  }
+
+
+
+
+
 }

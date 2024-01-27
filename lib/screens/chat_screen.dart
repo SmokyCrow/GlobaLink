@@ -166,16 +166,19 @@ class _ChatScreenState extends State<ChatScreen> {
     // Determine if the original message should be shown, default to false for receiver
     bool showOriginal = _messageToggleStates[messageId] ?? isSender;
 
+
     // Determine which message to display
     String displayMessage;
-    if (showOriginal) {
+    if(isSender && showOriginal){
       displayMessage = data['message'];
-    } else if (data.containsKey('preferredTranslatedMessage') && data['preferredTranslatedMessage'].isNotEmpty) {
-      // Show preferred translated message if available
-      displayMessage = data['preferredTranslatedMessage'];
-    } else {
-      // Fallback to the regular translated message
-      displayMessage = data['translatedMessage'] ?? data['message'];
+    } else if(isSender && !showOriginal){
+      displayMessage = data['senderTranslated'];
+    } else if(!isSender && !showOriginal){
+      displayMessage = data['receiverTranslated'];
+    } else if(!isSender && showOriginal){
+      displayMessage = data['receiverPreferredTranslated'];
+    } else{
+      displayMessage = "";
     }
 
     return GestureDetector(

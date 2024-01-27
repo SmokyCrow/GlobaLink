@@ -5,8 +5,9 @@ class Message {
   final String senderEmail;
   final String receiverId;
   final String message;
-  final String translatedMessage; // New field
-  final String preferredTranslatedMessage;
+  final String receiverTranslated; // New field
+  final String senderTranslated;
+  final String receiverPreferredTranslated;
   final Timestamp timeStamp;
 
   Message({
@@ -14,8 +15,9 @@ class Message {
     required this.senderEmail,
     required this.receiverId,
     required this.message,
-    this.translatedMessage = '', // Default to empty string
-    this.preferredTranslatedMessage = '',
+    this.receiverTranslated = '', // Default to empty string
+    this.receiverPreferredTranslated = '',
+    this.senderTranslated = '',
     required this.timeStamp,
   });
 
@@ -25,8 +27,9 @@ class Message {
       'senderEmail': senderEmail,
       'receiverId': receiverId,
       'message': message,
-      'translatedMessage': translatedMessage, // Include in map
-      'preferredTranslatedMessage' : preferredTranslatedMessage,
+      'receiverTranslated': receiverTranslated, // Include in map
+      'senderTranslated' : senderTranslated,
+      'receiverPreferredTranslated' : receiverPreferredTranslated,
       'timestamp': timeStamp,
     };
   }

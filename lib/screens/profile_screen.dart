@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:globalink/services/translation/language_map.dart';
 
+import '../services/chat/chat_service.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -166,8 +168,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future updateUserProfile(String newUsername) async {
-    if (user != null) {
 
+    if (user != null) {
+      final ChatService chatService = ChatService();
       Map<String, dynamic> updatedData = {
         'username': newUsername,
         'interests': userInterests
@@ -196,11 +199,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               selectedLanguage; // Include the selected native language
         }
 
-        // if (selectedPreferredLanguage != null) {
-        //   updatedData['preferred_language'] = selectedPreferredLanguage;
-        // }
+        if(selectedPreferredLanguage != "" && selectedPreferredLanguage != null){
+          updatedData['preferred_language'] = selectedPreferredLanguage;
+          await chatService.updatePreferredTranslations(selectedPreferredLanguage!, user!.uid);
+        }else{
+          updatedData['preferred_language'] = "";
+          await chatService.updatePreferredTranslations("none", user!.uid);
+        }
 
-        updatedData['preferred_language'] = selectedPreferredLanguage;
 
         if (newUsername.isNotEmpty &&
             newUsername != "" &&
@@ -223,6 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to update profile.')),
         );
+        print(e);
       }
     }
   }
