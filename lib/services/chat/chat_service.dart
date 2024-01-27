@@ -25,10 +25,13 @@ class ChatService {
     // Translate the message here if the receiver needs it
 
     String receiverTranslated = await _translationService.translate(message, receiverLanguage);
-    String receiverPreferredTranslated = await _translationService.translate(message, receiverPreferredLanguage);
+    String receiverPreferredTranslated = message;
     String senderTranslated = await _translationService.translate(message, receiverLanguage);
     if(senderPreferredLanguage != ""){
       senderTranslated = await _translationService.translate(message, senderPreferredLanguage);
+    }
+    if(receiverPreferredLanguage != ""){
+      receiverPreferredTranslated = await _translationService.translate(message, receiverPreferredLanguage);
     }
 
 
