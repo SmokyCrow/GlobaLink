@@ -251,15 +251,16 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildStarterMessages() {
-    List<String> starterMessages = _translatedStarterMessages;
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text("Choose an initial message:"),
         const SizedBox(height: 10),
-        Column(
-          children: starterMessages.map((message) {
+        _isLoadingUserData
+            ? CircularProgressIndicator() // Affiche l'icône de chargement
+            : (_translatedStarterMessages.isNotEmpty
+            ? Column(
+          children: _translatedStarterMessages.map((message) {
             return Column(
               children: [
                 ElevatedButton(
@@ -272,7 +273,8 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             );
           }).toList(),
-        ),
+        )
+            : CircularProgressIndicator()), // Ne rien afficher si les messages traduits sont vides
       ],
     );
   }
