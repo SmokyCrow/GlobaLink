@@ -18,8 +18,10 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _isLoadingMessages = true;
   final Map<String, bool> _messageToggleStates = {};
+  List<String> allStarterMessages = ["___", "___", "___", "___"];
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -40,8 +42,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+
     super.initState();
     _isLoadingMessages = true;
+    _fetchAllStarterMessages();
     _loadUserData();
   }
 
@@ -141,7 +145,7 @@ class _ChatScreenState extends State<ChatScreen> {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("No messages yet."));
+          return _buildStarterMessages();
         }
 
         var messageDocs = snapshot.data!.docs;
@@ -241,5 +245,56 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildStarterMessages(){
+
+    allStarterMessages.shuffle();
+    List<String> initialMessages = allStarterMessages.sublist(0, 4);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Choose an initial message:"),
+        const SizedBox(height: 10),
+        Column(
+          children: initialMessages.map((message) {
+            return Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _sendMessageOnSelect(message);
+                  },
+                  child: Text(message),
+                ),
+                SizedBox(height: 10),
+              ],
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  void _sendMessageOnSelect(String selectedMessage) async {
+    // Send the selected message as a normal message
+    await _chatService.sendMessage(widget.recieverUserID, selectedMessage);
+
+    // Clear the message input field
+    _messageController.clear();
+
+    // Scroll to the bottom of the message list
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  Future<void> _fetchAllStarterMessages() async{
+    final starterMessagesdoc = await _firestore.collection('centraldata').doc('starterMessages').get();
+    if (starterMessagesdoc.exists && starterMessagesdoc.data() != null) {
+      allStarterMessages = List<String>.from(starterMessagesdoc.data()?['startedMessages'] ?? ["Hello!", "Hey!", "Hi", "Yo!"]);
+    }
   }
 }
