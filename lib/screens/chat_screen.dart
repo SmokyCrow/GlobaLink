@@ -257,7 +257,7 @@ class _ChatScreenState extends State<ChatScreen> {
         const Text("Choose an initial message:"),
         const SizedBox(height: 10),
         _isLoadingUserData
-            ? CircularProgressIndicator() // Affiche l'icône de chargement
+            ? CircularProgressIndicator()
             : (_translatedStarterMessages.isNotEmpty
             ? Column(
           children: _translatedStarterMessages.map((message) {
@@ -274,7 +274,7 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           }).toList(),
         )
-            : CircularProgressIndicator()), // Ne rien afficher si les messages traduits sont vides
+            : CircularProgressIndicator()),
       ],
     );
   }
