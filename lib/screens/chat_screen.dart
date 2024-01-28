@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:globalink/services/chat/chat_service.dart';
+import 'package:globalink/services/translation/translation_service.dart';
 import '../model/animations.dart';
 import 'partner_profile_screen.dart';
 
@@ -19,9 +20,11 @@ class _ChatScreenState extends State<ChatScreen> {
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TranslationService _translationService = TranslationService("952f35b2-563a-6d96-4e47-6cd7c1991ff0:fx"); // Initialize with your API key
   bool _isLoadingMessages = true;
   final Map<String, bool> _messageToggleStates = {};
   List<String> allStarterMessages = ["___", "___", "___", "___"];
+  List<String> _translatedStarterMessages = [];
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -80,32 +83,32 @@ class _ChatScreenState extends State<ChatScreen> {
         title: _isLoadingUserData
             ? const Text("Loading...")
             : GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      SlideRightRoute(
-                          page: PartnerProfileScreen(
-                              userId: widget.recieverUserID)));
-                },
-                child: Row(
-                  children: [
-                    _profilePictureUrl != ''
-                        ? CircleAvatar(
-                            backgroundImage: NetworkImage(_profilePictureUrl),
-                          )
-                        : const CircleAvatar(
-                            // Use a default image if profilePictureUrl is ''
-                            backgroundImage:
-                                AssetImage('images/default_prof_picture.png'),
-                          ),
-                    const SizedBox(width: 10),
-                    Text(
-                      _username,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+          onTap: () {
+            Navigator.push(
+                context,
+                SlideRightRoute(
+                    page: PartnerProfileScreen(
+                        userId: widget.recieverUserID)));
+          },
+          child: Row(
+            children: [
+              _profilePictureUrl != ''
+                  ? CircleAvatar(
+                backgroundImage: NetworkImage(_profilePictureUrl),
+              )
+                  : const CircleAvatar(
+                // Use a default image if profilePictureUrl is ''
+                backgroundImage:
+                AssetImage('images/default_prof_picture.png'),
               ),
+              const SizedBox(width: 10),
+              Text(
+                _username,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -233,7 +236,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 hintText: 'Type a message',
                 border: InputBorder.none,
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
               ),
               textInputAction: TextInputAction.send,
             ),
@@ -247,10 +250,8 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildStarterMessages(){
-
-    allStarterMessages.shuffle();
-    List<String> initialMessages = allStarterMessages.sublist(0, 4);
+  Widget _buildStarterMessages() {
+    List<String> starterMessages = _translatedStarterMessages;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -258,7 +259,7 @@ class _ChatScreenState extends State<ChatScreen> {
         const Text("Choose an initial message:"),
         const SizedBox(height: 10),
         Column(
-          children: initialMessages.map((message) {
+          children: starterMessages.map((message) {
             return Column(
               children: [
                 ElevatedButton(
@@ -291,10 +292,36 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Future<void> _fetchAllStarterMessages() async{
-    final starterMessagesdoc = await _firestore.collection('centraldata').doc('starterMessages').get();
-    if (starterMessagesdoc.exists && starterMessagesdoc.data() != null) {
-      allStarterMessages = List<String>.from(starterMessagesdoc.data()?['startedMessages'] ?? ["Hello!", "Hey!", "Hi", "Yo!"]);
+  Future<void> _fetchAllStarterMessages() async {
+    try {
+      setState(() {
+        _isLoadingUserData = true;
+      });
+
+      final starterMessagesdoc = await _firestore.collection('centraldata').doc('starterMessages').get();
+      final currentDoc = await _firestore.collection('users').doc(_firebaseAuth.currentUser!.uid).get();
+      String currentNativeLanguage = currentDoc['native_language'];
+
+      if (starterMessagesdoc.exists && starterMessagesdoc.data() != null) {
+        allStarterMessages = List<String>.from(starterMessagesdoc.data()?['startedMessages'] ?? ["Hello!", "Hey!", "Hi", "Yo!"]);
+        allStarterMessages.shuffle();
+        allStarterMessages = allStarterMessages.sublist(0, 4);
+        for (var i = 0; i < allStarterMessages.length; i++) {
+          allStarterMessages[i] = await _translationService.translate(allStarterMessages[i], currentNativeLanguage);
+        }
+
+        setState(() {
+          _translatedStarterMessages = List.from(allStarterMessages);
+        });
+      }
+
+      setState(() {
+        _isLoadingUserData = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingUserData = false;
+      });
     }
   }
 }
