@@ -5,7 +5,7 @@ class Message {
   final String senderEmail;
   final String receiverId;
   final String message;
-  final String receiverTranslated; // New field
+  final String receiverTranslated;
   final String senderTranslated;
   final String receiverPreferredTranslated;
   final Timestamp timeStamp;
@@ -15,7 +15,7 @@ class Message {
     required this.senderEmail,
     required this.receiverId,
     required this.message,
-    this.receiverTranslated = '', // Default to empty string
+    this.receiverTranslated = '',
     this.receiverPreferredTranslated = '',
     this.senderTranslated = '',
     required this.timeStamp,
@@ -27,7 +27,7 @@ class Message {
       'senderEmail': senderEmail,
       'receiverId': receiverId,
       'message': message,
-      'receiverTranslated': receiverTranslated, // Include in map
+      'receiverTranslated': receiverTranslated,
       'senderTranslated' : senderTranslated,
       'receiverPreferredTranslated' : receiverPreferredTranslated,
       'timestamp': timeStamp,

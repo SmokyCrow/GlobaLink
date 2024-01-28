@@ -105,12 +105,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _isProfileComplete = userData?['profileComplete'] ?? false;
       });
     }
-    if (_isProfileComplete || index == 2) { // Assuming index 2 is for ProfileScreen
+    if (_isProfileComplete || index == 2) {
       setState(() {
         _currentIndex = index;
       });
     } else {
-      // Optionally show a dialog/message to the user indicating they need to complete their profile
       showDialog(
         context: context,
         builder: (context) {

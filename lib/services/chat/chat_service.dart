@@ -22,8 +22,6 @@ class ChatService {
     DocumentSnapshot senderSnapshot = await _fireStore.collection('users').doc(currentUserId).get();
     String senderPreferredLanguage = senderSnapshot['preferred_language'];
 
-    // Translate the message here if the receiver needs it
-
     String receiverTranslated = await _translationService.translate(message, receiverLanguage);
     String receiverPreferredTranslated = message;
     String senderTranslated = await _translationService.translate(message, receiverLanguage);
@@ -40,7 +38,7 @@ class ChatService {
       senderEmail: currentUserEmail,
       receiverId: receiverId,
       message: message,
-      receiverTranslated: receiverTranslated, // Set the translated message
+      receiverTranslated: receiverTranslated,
       senderTranslated: senderTranslated,
       receiverPreferredTranslated: receiverPreferredTranslated,
       timeStamp: timeStamp,
@@ -67,18 +65,7 @@ class ChatService {
     return _fireStore.collection('chat_rooms').doc(chatRoomId).collection('messages').orderBy('timestamp', descending: true).snapshots();
   }
 
-  final TranslationService _translationService = TranslationService("952f35b2-563a-6d96-4e47-6cd7c1991ff0:fx"); // Initialize with your API key
-
-  // Add a method to determine if translation is needed
-  Future<String> getDisplayMessage(String senderId, String message) async {
-    if (_firebaseAuth.currentUser!.uid == senderId) {
-      // If the current user is the sender, return the original message
-      return message;
-    } else {
-      // If the current user is the receiver, translate the message
-      return _translationService.translate(message, "HU");
-    }
-  }
+  final TranslationService _translationService = TranslationService("952f35b2-563a-6d96-4e47-6cd7c1991ff0:fx");
 
   // Method to check if a conversation exists between two users
   Future<bool> hasConversation(String user1Id, String user2Id) async {

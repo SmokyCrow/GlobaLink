@@ -50,16 +50,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
-                child: Text('Before diving in, please complete your profile details. This is crucial for full access to our app\'s features.'),
+                child: Text('Complete your profile for full app features. Setting a preferred language is optional and customizes your chat translations.'),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
                 child: Text.rich(
                   TextSpan(
+                    text: '• ',
                     children: [
-                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Navigation Made Easy: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Seamlessly switch between different sections using the bottom navigation bar.'),
+                      TextSpan(text: 'Navigate Easily:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' Use the bottom bar for easy app navigation.'),
                     ],
                   ),
                 ),
@@ -68,10 +68,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.only(bottom: 8.0),
                 child: Text.rich(
                   TextSpan(
+                    text: '• ',
                     children: [
-                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Connect and Chat: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Discover and connect with new people on the \'New Chat\' page. Just click on a user to start a conversation.'),
+                      TextSpan(text: 'Connect Quickly:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' Start new chats from the \'New Chat\' page.'),
                     ],
                   ),
                 ),
@@ -80,10 +80,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.only(bottom: 8.0),
                 child: Text.rich(
                   TextSpan(
+                    text: '• ',
                     children: [
-                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Personalize Your Profile: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Customize your profile anytime, adding a personal touch to your online presence.'),
+                      TextSpan(text: 'Personalize Your Profile:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' Add a personal touch at any time.'),
                     ],
                   ),
                 ),
@@ -92,10 +92,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.only(bottom: 8.0),
                 child: Text.rich(
                   TextSpan(
+                    text: '• ',
                     children: [
-                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Know Who You\'re Chatting With: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Click on their name in the chat room to view their profile.'),
+                      TextSpan(text: 'Understand Chats Better:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' Switch between original and translated messages easily.'),
                     ],
                   ),
                 ),
@@ -104,17 +104,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.only(bottom: 8.0),
                 child: Text.rich(
                   TextSpan(
+                    text: '• ',
                     children: [
-                      TextSpan(text: '• ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Message Clarity: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                      TextSpan(text: 'Switch between original and translated messages with a simple click, ensuring clear communication.'),
+                      TextSpan(text: 'Start Conversations:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' Use pre-written messages for an easy start.'),
                     ],
                   ),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 8.0),
-                child: Text('We\'re excited to have you here and can\'t wait for you to explore GlobaLink!'),
+                child: Text.rich(
+                  TextSpan(
+                    text: '• ',
+                    children: [
+                      TextSpan(text: 'Partner Profiles:', style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: ' View chat partners’ profiles by clicking their names.'),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text('Ready to explore GlobaLink? Happy connecting!'),
               ),
             ],
           ),
@@ -130,6 +142,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
+
+
 
 
 

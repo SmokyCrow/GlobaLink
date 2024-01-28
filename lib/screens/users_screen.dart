@@ -36,12 +36,11 @@ class UsersScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Centered username without label
             // Profile picture
             Center(
               child: CircleAvatar(
                 backgroundImage: NetworkImage(profilePictureUrl.isNotEmpty ? profilePictureUrl : 'images/default_prof_picture.png'),
-                radius: 30, // Adjust the size as needed
+                radius: 30,
               ),
             ),
             const SizedBox(height: 10),
@@ -53,7 +52,6 @@ class UsersScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            // Vignettes pour les centres d'intérêts
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -166,7 +164,7 @@ class UsersScreen extends StatelessWidget {
         }
 
         return Column(
-          children: snapshot.data ?? [], // Utilisez snapshot.data qui contient la liste des widgets
+          children: snapshot.data ?? [],
         );
       },
     );
