@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TranslationService {
-  final String apiKey; // Your DeepL API Key
+  final String apiKey;
   final String baseUrl = 'https://api-free.deepl.com/v2/translate';
 
   TranslationService(this.apiKey);

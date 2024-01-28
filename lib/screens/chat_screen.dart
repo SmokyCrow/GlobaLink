@@ -20,7 +20,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final TranslationService _translationService = TranslationService("952f35b2-563a-6d96-4e47-6cd7c1991ff0:fx"); // Initialize with your API key
+  final TranslationService _translationService = TranslationService("952f35b2-563a-6d96-4e47-6cd7c1991ff0:fx");
   bool _isLoadingMessages = true;
   final Map<String, bool> _messageToggleStates = {};
   List<String> allStarterMessages = ["___", "___", "___", "___"];
@@ -97,7 +97,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 backgroundImage: NetworkImage(_profilePictureUrl),
               )
                   : const CircleAvatar(
-                // Use a default image if profilePictureUrl is ''
                 backgroundImage:
                 AssetImage('images/default_prof_picture.png'),
               ),
