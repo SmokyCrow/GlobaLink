@@ -32,8 +32,6 @@
 - **Backend**:
   - **Firebase Authentication**: Handles secure user login and registration.
   - **Firestore Database**: Manages real-time chat and user data.
-- **State Management**:
-  - Efficiently handled with the **Provider** package.
 - **Translation**:
   - Integrated with the **DeepL API** for accurate and seamless message translation.
 
